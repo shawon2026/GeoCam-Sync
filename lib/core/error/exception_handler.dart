@@ -1,0 +1,53 @@
+import 'package:dartz/dartz.dart';
+import 'exceptions.dart';
+import 'failures.dart';
+
+/// Converts exceptions to failures - use this in all repository methods
+///
+/// Usage:
+/// ```dart
+/// @override
+/// Future<Either<Failure, LoginResponse>> login(LoginEntity entity) async {
+///   return handleException(() async {
+///     final response = await remoteDataSource.login(model);
+///     await localDataSource.saveLoginData(response);
+///     return response;  // Just return the data, not Right()
+///   });
+/// }
+/// ```
+Future<Either<Failure, T>> handleException<T>(
+  Future<T> Function() operation,
+) async {
+  try {
+    final result = await operation();
+    return Right(result);
+  } on ValidationException catch (e) {
+    return Left(ValidationFailure(
+      message: e.message,
+      statusCode: e.statusCode,
+      errors: e.errors,
+    ));
+  } on UnauthorizedException catch (e) {
+    return Left(AuthenticationFailure(
+      message: e.message,
+      statusCode: e.statusCode,
+    ));
+  } on NetworkException catch (e) {
+    return Left(NetworkFailure(
+      message: e.message,
+      statusCode: e.statusCode,
+    ));
+  } on ServerException catch (e) {
+    return Left(ServerFailure(
+      message: e.message,
+      statusCode: e.statusCode,
+    ));
+  } on TooManyRequestsException catch (e) {
+    return Left(TooManyRequestsFailure(
+      message: e.message,
+      statusCode: e.statusCode,
+    ));
+  } catch (e) {
+    return Left(ServerFailure(message: e.toString()));
+  }
+}
