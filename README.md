@@ -24,9 +24,11 @@ This project aims to demonstrate:
 ## 🧩 Features
 
 ### Attendance
-- [ ] Set office location
-- [ ] Distance tracking
-- [ ] Attendance validation (≤ 50m)
+- [x] Set office location from current GPS
+- [x] Live distance tracking with range color states
+- [x] Attendance validation (≤ 50m)
+- [x] Late attendance handling (after 10:30 AM)
+- [x] Attendance history from local database
 
 ### Camera & Sync
 - [ ] Custom camera UI
@@ -49,11 +51,15 @@ This project follows a minimal **Clean Architecture** with feature-first structu
 
 ### Current Feature Module
 
-The active sample module is `home`:
+The active modules are:
 
 - `lib/features/home/presentation/...`
 - `lib/features/home/domain/...`
 - `lib/features/home/data/...`
+- `lib/features/attendance/presentation/...`
+- `lib/features/attendance/domain/...`
+- `lib/features/attendance/data/...`
+- `lib/db/...` for drift tables and database
 
 ### Data Flow (Request → UI)
 
@@ -74,6 +80,32 @@ Inside `features/<module>/data/models/`, keep models separated by concern:
 
 This keeps API contract and local storage contract clean and scalable.
 
+## ✅ Task 1 Stack (Geo-Fenced Attendance)
+
+- State Management: `flutter_bloc`, `equatable`
+- Location: `location`
+- Settings Redirect: `app_settings`
+- Local Database: `drift`, `drift_flutter`
+- Time Logic: `intl`
+- Code Generation: `build_runner`, `drift_dev`
+
+### Why this stack
+- State transitions are explicit and testable with Cubit.
+- Location + service checks and live updates are handled in one runtime package.
+- Settings redirection is handled with a focused utility package.
+- Drift provides structured daily attendance and history queries.
+
+### Why alternatives were not selected
+- `geolocator`: not used because this flow is implemented with `location`.
+- `permission_handler`: not required for current scope; settings redirect is handled by `app_settings`.
+- `hive`: not selected for query-driven attendance/history use case.
+- `shared_preferences`: not suitable for attendance record storage.
+
+### Task 1 Docs
+- Package decision: `docs/task1/package-decision.md`
+- State matrix: `docs/task1/attendance-state-matrix.md`
+- Folder rationale: `docs/task1/folder-structure-rationale.md`
+
 ---
 
 ## 📦 Final Build Drop
@@ -90,6 +122,7 @@ Final release build artifacts are available in this folder:
 
 ```bash
 flutter pub get
+dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
 flutter run
 ```

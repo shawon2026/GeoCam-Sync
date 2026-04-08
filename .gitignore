@@ -72,7 +72,6 @@ config.json
 .codex
 .codex/
 /tooling/
-/docs/
 
 # Local Flutter tool metadata (project-scoped)
 .metadata
@@ -85,3 +84,6 @@ coverage/
 *.rej
 /lib/features/splash/data/.gitkeep
 /lib/features/splash/domain/.gitkeep
+
+# Local documentation workspace
+/docs/
