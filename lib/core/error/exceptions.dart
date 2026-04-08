@@ -72,4 +72,10 @@ class MethodNotAllowedException extends AppException {
   MethodNotAllowedException({required super.message, super.statusCode = 405});
 }
 
+class LocationPermissionException extends AppException {
+  LocationPermissionException({required super.message, super.statusCode});
+}
 
+class LocationServiceException extends AppException {
+  LocationServiceException({required super.message, super.statusCode});
+}

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '/core/routes/app_routes.dart';
+import '/core/routes/navigation.dart';
 import '/core/utils/extension.dart';
 import '/features/home/presentation/widgets/home_navigation_card.dart';
 
@@ -15,10 +17,8 @@ class HomeContentSection extends StatelessWidget {
           icon: Icons.location_on_outlined,
           buttonLabel: context.loc.openTask1Button,
           accentColor: const Color(0xFF0EA5E9),
-          onTap: () => _showPendingFeatureInfo(
-            context,
-            context.loc.geoFencedAttendancePending,
-          ),
+          onTap: () =>
+              Navigation.push(context, appRoutes: AppRoutes.attendance),
         ),
         const SizedBox(height: 12),
         HomeNavigationCard(
