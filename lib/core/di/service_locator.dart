@@ -4,9 +4,13 @@ import 'package:get_it/get_it.dart';
 import 'package:location/location.dart';
 import '../../features/home/domain/usecases/get_home.dart';
 import '/core/services/app_settings_service.dart';
+import '/core/services/camera_permission_service.dart';
+import '/core/network/connectivity_service.dart';
 import '/db/app_database.dart';
 import '/core/network/api_client.dart';
 import '/core/network/network_info.dart';
+import '/core/services/background_worker_service.dart';
+import '/core/services/thumbnail_service.dart';
 import '/core/utils/preferences_helper.dart';
 import '/features/attendance/data/datasources/attendance_local_datasource.dart';
 import '/features/attendance/data/datasources/location_datasource.dart';
@@ -31,6 +35,37 @@ import '/features/home/data/datasources/home_remote_datasource.dart';
 import '/features/home/data/datasources/home_local_datasource.dart';
 import '/features/home/data/repositories/home_repository_impl.dart';
 import '/features/home/domain/repositories/home_repository.dart';
+import '/features/upload_manager/data/datasources/camera_datasource.dart';
+import '/features/upload_manager/data/datasources/local_upload_datasource.dart';
+import '/features/upload_manager/data/datasources/network_monitor_datasource.dart';
+import '/features/upload_manager/data/datasources/remote_upload_datasource.dart';
+import '/features/upload_manager/data/repositories/camera_repository_impl.dart';
+import '/features/upload_manager/data/repositories/sync_repository_impl.dart';
+import '/features/upload_manager/data/repositories/upload_repository_impl.dart';
+import '/features/upload_manager/domain/repositories/camera_repository.dart';
+import '/features/upload_manager/domain/repositories/sync_repository.dart';
+import '/features/upload_manager/domain/repositories/upload_repository.dart';
+import '/features/upload_manager/domain/usecases/camera/capture_photo.dart';
+import '/features/upload_manager/domain/usecases/camera/focus_at_point.dart';
+import '/features/upload_manager/domain/usecases/camera/initialize_camera.dart';
+import '/features/upload_manager/domain/usecases/camera/set_zoom_level.dart';
+import '/features/upload_manager/domain/usecases/camera/switch_camera.dart';
+import '/features/upload_manager/domain/usecases/sync/handle_network_recovery.dart';
+import '/features/upload_manager/domain/usecases/sync/process_upload_queue.dart';
+import '/features/upload_manager/domain/usecases/sync/retry_failed_uploads.dart';
+import '/features/upload_manager/domain/usecases/sync/start_background_sync.dart';
+import '/features/upload_manager/domain/usecases/sync/watch_sync_status.dart';
+import '/features/upload_manager/domain/usecases/upload/add_files_to_queue.dart';
+import '/features/upload_manager/domain/usecases/upload/create_upload_batch.dart';
+import '/features/upload_manager/domain/usecases/upload/delete_synced_file_locally.dart';
+import '/features/upload_manager/domain/usecases/upload/get_pending_uploads.dart';
+import '/features/upload_manager/domain/usecases/upload/get_upload_summary.dart';
+import '/features/upload_manager/domain/usecases/upload/pause_all_uploads.dart';
+import '/features/upload_manager/domain/usecases/upload/resume_all_uploads.dart';
+import '/features/upload_manager/domain/usecases/upload/watch_pending_uploads.dart';
+import '/features/upload_manager/presentation/cubit/camera_preview/camera_preview_cubit.dart';
+import '/features/upload_manager/presentation/cubit/sync_engine/sync_engine_cubit.dart';
+import '/features/upload_manager/presentation/cubit/upload_manager/upload_manager_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -49,6 +84,16 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<AppSettingsService>(
     () => const AppSettingsService(),
   );
+  sl.registerLazySingleton<CameraPermissionService>(
+    () => CameraPermissionService(appSettingsService: sl()),
+  );
+  sl.registerLazySingleton<ConnectivityService>(
+    () => ConnectivityServiceImpl(connectivity: sl()),
+  );
+  sl.registerLazySingleton<BackgroundWorkerService>(
+    () => const BackgroundWorkerService(),
+  );
+  sl.registerLazySingleton<ThumbnailService>(() => const ThumbnailService());
   sl.registerLazySingleton<ApiClient>(
     () => ApiClient(dio: sl(), prefHelper: sl()),
   );
@@ -110,6 +155,81 @@ Future<void> initDependencies() async {
       checkAttendanceEligibility: sl(),
       openAppSettings: sl(),
       openLocationSettings: sl(),
+    ),
+  );
+
+  // Upload Manager Feature
+  sl.registerLazySingleton<CameraDataSource>(
+    () => CameraDataSourceImpl(thumbnailService: sl()),
+  );
+  sl.registerLazySingleton<LocalUploadDataSource>(
+    () => LocalUploadDataSourceImpl(database: sl<AppDatabase>()),
+  );
+  sl.registerLazySingleton<RemoteUploadDataSource>(
+    () => RemoteUploadDataSourceImpl(),
+  );
+  sl.registerLazySingleton<NetworkMonitorDataSource>(
+    () => NetworkMonitorDataSourceImpl(connectivityService: sl()),
+  );
+
+  sl.registerLazySingleton<CameraRepository>(
+    () => CameraRepositoryImpl(dataSource: sl()),
+  );
+  sl.registerLazySingleton<UploadRepository>(
+    () => UploadRepositoryImpl(localDataSource: sl()),
+  );
+  sl.registerLazySingleton<SyncRepository>(
+    () => SyncRepositoryImpl(
+      networkMonitorDataSource: sl(),
+      localUploadDataSource: sl(),
+      remoteUploadDataSource: sl(),
+      backgroundWorkerService: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(() => InitializeCamera(sl()));
+  sl.registerLazySingleton(() => CapturePhoto(sl()));
+  sl.registerLazySingleton(() => SetZoomLevel(sl()));
+  sl.registerLazySingleton(() => FocusAtPoint(sl()));
+  sl.registerLazySingleton(() => SwitchCamera(sl()));
+  sl.registerLazySingleton(() => CreateUploadBatch(sl()));
+  sl.registerLazySingleton(() => AddFilesToQueue(sl()));
+  sl.registerLazySingleton(() => GetPendingUploads(sl()));
+  sl.registerLazySingleton(() => GetUploadSummary(sl()));
+  sl.registerLazySingleton(() => PauseAllUploads(sl()));
+  sl.registerLazySingleton(() => ResumeAllUploads(sl()));
+  sl.registerLazySingleton(() => DeleteSyncedFileLocally(sl()));
+  sl.registerLazySingleton(() => WatchPendingUploads(sl()));
+  sl.registerLazySingleton(() => StartBackgroundSync(sl()));
+  sl.registerLazySingleton(() => RetryFailedUploads(sl()));
+  sl.registerLazySingleton(() => ProcessUploadQueue(sl()));
+  sl.registerLazySingleton(() => WatchSyncStatus(sl()));
+  sl.registerLazySingleton(() => HandleNetworkRecovery(sl()));
+
+  sl.registerFactory(
+    () => UploadManagerCubit(
+      getUploadSummary: sl(),
+      watchPendingUploads: sl(),
+      pauseAllUploads: sl(),
+      resumeAllUploads: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => CameraPreviewCubit(
+      initializeCamera: sl(),
+      capturePhoto: sl(),
+      setZoomLevel: sl(),
+      focusAtPoint: sl(),
+      switchCamera: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => SyncEngineCubit(
+      startBackgroundSync: sl(),
+      retryFailedUploads: sl(),
+      processUploadQueue: sl(),
+      watchSyncStatus: sl(),
+      handleNetworkRecovery: sl(),
     ),
   );
 }

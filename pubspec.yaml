@@ -47,9 +47,15 @@ dependencies:
   package_info_plus: ^9.0.0
   location: ^8.0.1
   app_settings: ^7.0.0
+  permission_handler: ^12.0.1
+  camera: ^0.11.2+1
   drift: ^2.32.1
   drift_flutter: ^0.3.0
   sqlite3_flutter_libs: ^0.6.0+eol
+  workmanager: ^0.9.0+3
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  image: ^4.5.4
 
 dev_dependencies:
   flutter_test:

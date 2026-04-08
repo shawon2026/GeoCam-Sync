@@ -6,6 +6,7 @@ import '/core/di/service_locator.dart';
 import '/core/localization/locale_manager.dart';
 import '/core/presentation/widgets/global_network_listener.dart';
 import '/core/routes/navigation.dart';
+import '/core/services/background_worker_service.dart';
 import '/core/theme/theme_manager.dart';
 import '/core/utils/app_version.dart';
 import '/core/utils/preferences_helper.dart';
@@ -23,6 +24,7 @@ void main() async {
     // Initialize dependency injection (get_it service locator)
     // This must be called before runApp() to ensure all dependencies are ready
     await initDependencies();
+    await sl<BackgroundWorkerService>().initialize();
 
     // Set Portrait Mode only
     await SystemChrome.setPreferredOrientations([

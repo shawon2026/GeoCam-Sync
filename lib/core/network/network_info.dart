@@ -21,7 +21,7 @@ class NetworkInfoImpl implements NetworkInfo {
   bool _isInternet = false;
 
   NetworkInfoImpl({required Connectivity connectivity})
-      : _connectivity = connectivity;
+    : _connectivity = connectivity;
 
   /// Get whether internet is available
   bool get isInternet => _isInternet;
@@ -40,7 +40,8 @@ class NetworkInfoImpl implements NetworkInfo {
   @override
   Future<bool> internetAvailable() async {
     final connectivityResult = await _connectivity.checkConnectivity();
-    _isInternet = connectivityResult.isNotEmpty &&
+    _isInternet =
+        connectivityResult.isNotEmpty &&
         connectivityResult.any((element) => element != ConnectivityResult.none);
     return _isInternet;
   }

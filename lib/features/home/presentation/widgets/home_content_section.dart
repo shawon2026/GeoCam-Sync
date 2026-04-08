@@ -27,18 +27,10 @@ class HomeContentSection extends StatelessWidget {
           icon: Icons.cloud_upload_outlined,
           buttonLabel: context.loc.openTask2Button,
           accentColor: const Color(0xFF10B981),
-          onTap: () => _showPendingFeatureInfo(
-            context,
-            context.loc.uploadManagerPending,
-          ),
+          onTap: () =>
+              Navigation.push(context, appRoutes: AppRoutes.uploadManager),
         ),
       ],
     );
-  }
-
-  void _showPendingFeatureInfo(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }

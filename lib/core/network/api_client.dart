@@ -19,11 +19,9 @@ class ApiClient {
   final Dio _dio;
   final PrefHelper _prefHelper;
 
-  ApiClient({
-    required Dio dio,
-    required PrefHelper prefHelper,
-  })  : _dio = dio,
-        _prefHelper = prefHelper {
+  ApiClient({required Dio dio, required PrefHelper prefHelper})
+    : _dio = dio,
+      _prefHelper = prefHelper {
     _dio.options = BaseOptions(
       baseUrl: ApiUrl.base.url,
       connectTimeout: const Duration(seconds: 20),
@@ -166,10 +164,7 @@ class ApiClient {
         if (status == 429) {
           return TooManyRequestsException(message: 'Too many requests');
         }
-        return ServerException(
-          message: 'Server error',
-          statusCode: status,
-        );
+        return ServerException(message: 'Server error', statusCode: status);
       default:
         return ServerException(message: e.message ?? 'Unknown server error');
     }
@@ -194,10 +189,7 @@ class ApiClient {
     }
 
     if (method == HttpMethod.download) {
-      return {
-        'saved_to': savePath ?? '',
-        'status': 'dummy_download_ok',
-      };
+      return {'saved_to': savePath ?? '', 'status': 'dummy_download_ok'};
     }
 
     return {
