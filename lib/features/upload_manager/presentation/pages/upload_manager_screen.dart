@@ -9,13 +9,13 @@ import '/core/routes/app_routes.dart';
 import '/core/routes/navigation.dart';
 import '/core/services/camera_permission_service.dart';
 import '/core/utils/extension.dart';
-import '/features/upload_manager/domain/entities/sync_status.dart';
 import '/features/upload_manager/presentation/cubit/sync_engine/sync_engine_cubit.dart';
 import '/features/upload_manager/presentation/cubit/sync_engine/sync_engine_state.dart';
 import '/features/upload_manager/presentation/cubit/upload_manager/upload_manager_cubit.dart';
 import '/features/upload_manager/presentation/cubit/upload_manager/upload_manager_state.dart';
 import '/features/upload_manager/presentation/pages/upload_manager_page.dart';
 import '/features/upload_manager/presentation/widgets/dialogs/camera_permission_dialog.dart';
+import '/features/upload_manager/presentation/widgets/upload_manager/upload_manager_loading_view.dart';
 
 class UploadManagerScreen extends StatefulWidget {
   const UploadManagerScreen({super.key});
@@ -29,6 +29,9 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
   late final UploadManagerCubit _uploadManagerCubit;
   late final SyncEngineCubit _syncEngineCubit;
   bool _waitingForCameraSettings = false;
+  bool _cameraDialogVisible = false;
+  bool _openingCamera = false;
+  BuildContext? _cameraDialogContext;
 
   CameraPermissionService get _cameraPermissionService =>
       sl<CameraPermissionService>();
@@ -46,7 +49,10 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _waitingForCameraSettings) {
-      _recheckCameraPermission();
+      Future<void>.delayed(
+        const Duration(milliseconds: 250),
+        _recheckCameraPermission,
+      );
     }
   }
 
@@ -65,98 +71,63 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
         BlocProvider.value(value: _uploadManagerCubit),
         BlocProvider.value(value: _syncEngineCubit),
       ],
-      child: MultiBlocListener(
-        listeners: [
-          BlocListener<UploadManagerCubit, UploadManagerState>(
-            listener: (context, state) {
-              if (state.message != null) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message!)));
-              }
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF3F5F9),
+        appBar: GlobalAppBar(
+          title: context.loc.uploadManagerTitle,
+        ),
+        bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.fromLTRB(16, 6, 16, 16),
+          child: BlocBuilder<SyncEngineCubit, SyncEngineState>(
+            builder: (context, syncState) {
+              return BlocBuilder<UploadManagerCubit, UploadManagerState>(
+                builder: (context, uploadState) {
+                  return FilledButton(
+                    onPressed: _startNewBatchFlow,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF3E73F1),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                    child: Text(
+                      context.loc.startNewUploadBatch.toUpperCase(),
+                    ),
+                  );
+                },
+              );
             },
           ),
-          BlocListener<SyncEngineCubit, SyncEngineState>(
-            listener: (context, state) {
-              if (state.message.isNotEmpty) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message)));
+        ),
+        body: SafeArea(
+          child: BlocBuilder<UploadManagerCubit, UploadManagerState>(
+            builder: (context, uploadState) {
+              if (uploadState.isLoading) {
+                return const UploadManagerLoadingView();
               }
+              return BlocBuilder<SyncEngineCubit, SyncEngineState>(
+                builder: (context, syncState) {
+                  return UploadManagerPage(
+                    networkLabel: syncState.networkState.label,
+                    phase: syncState.phase,
+                    summary: uploadState.summary,
+                    items: uploadState.items,
+                    isPaused: uploadState.isPaused,
+                    uploadSpeedMbps: syncState.uploadSpeedMbps,
+                    onPauseResume: uploadState.isPaused
+                        ? _uploadManagerCubit.resumeAll
+                        : _uploadManagerCubit.pauseAll,
+                  );
+                },
+              );
             },
-          ),
-        ],
-        child: Scaffold(
-          backgroundColor: const Color(0xFFF3F5F9),
-          appBar: GlobalAppBar(
-            title: context.loc.uploadManagerTitle,
-            showLanguageSwitcher: false,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: BlocBuilder<SyncEngineCubit, SyncEngineState>(
-                  builder: (context, syncState) {
-                    return Center(
-                      child: _SyncAppBarStatus(
-                        networkState: syncState.networkState,
-                        phase: syncState.phase,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          bottomNavigationBar: SafeArea(
-            minimum: const EdgeInsets.fromLTRB(16, 6, 16, 16),
-            child: BlocBuilder<SyncEngineCubit, SyncEngineState>(
-              builder: (context, syncState) {
-                return BlocBuilder<UploadManagerCubit, UploadManagerState>(
-                  builder: (context, uploadState) {
-                    return FilledButton(
-                      onPressed: _startNewBatchFlow,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF3E73F1),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      child: Text(
-                        context.loc.startNewUploadBatch.toUpperCase(),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          body: SafeArea(
-            child: BlocBuilder<UploadManagerCubit, UploadManagerState>(
-              builder: (context, uploadState) {
-                return BlocBuilder<SyncEngineCubit, SyncEngineState>(
-                  builder: (context, syncState) {
-                    return UploadManagerPage(
-                      networkLabel: syncState.networkState.label,
-                      phase: syncState.phase,
-                      summary: uploadState.summary,
-                      items: uploadState.items,
-                      isPaused: uploadState.isPaused,
-                      uploadSpeedMbps: syncState.uploadSpeedMbps,
-                      onPauseResume: uploadState.isPaused
-                          ? _uploadManagerCubit.resumeAll
-                          : _uploadManagerCubit.pauseAll,
-                    );
-                  },
-                );
-              },
-            ),
           ),
         ),
       ),
@@ -164,6 +135,9 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
   }
 
   Future<void> _startNewBatchFlow() async {
+    if (_openingCamera) {
+      return;
+    }
     if (await _cameraPermissionService.isGranted()) {
       _openCamera();
       return;
@@ -197,6 +171,11 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
     }
     if (granted) {
       _waitingForCameraSettings = false;
+      if (_cameraDialogContext?.mounted ?? false) {
+        Navigator.of(_cameraDialogContext!).pop();
+      }
+      _cameraDialogContext = null;
+      _cameraDialogVisible = false;
       _openCamera();
       return;
     }
@@ -204,62 +183,37 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
   }
 
   void _showCameraPermissionDialog() {
+    if (_cameraDialogVisible || !mounted) {
+      return;
+    }
+    _cameraDialogVisible = true;
     showDialog<void>(
       context: context,
       barrierDismissible: true,
-      builder: (_) {
+      builder: (dialogContext) {
+        _cameraDialogContext = dialogContext;
         return CameraPermissionDialog(
           onGivePermission: () async {
-            Navigator.of(context).pop();
+            if (_cameraDialogContext?.mounted ?? false) {
+              Navigator.of(_cameraDialogContext!).pop();
+            }
             _waitingForCameraSettings = true;
             await _cameraPermissionService.openSettings();
           },
         );
       },
-    );
+    ).then((_) {
+      _cameraDialogContext = null;
+      _cameraDialogVisible = false;
+    });
   }
 
-  void _openCamera() {
-    Navigation.push(context, appRoutes: AppRoutes.cameraPreview);
-  }
-}
-
-class _SyncAppBarStatus extends StatelessWidget {
-  const _SyncAppBarStatus({required this.networkState, required this.phase});
-
-  final NetworkState networkState;
-  final SyncPhase phase;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = switch (networkState) {
-      NetworkState.stable => const Color(0xFF16A34A),
-      NetworkState.unstable => const Color(0xFFF59E0B),
-      NetworkState.offline => const Color(0xFFDC2626),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.circle, size: 8, color: color),
-          const SizedBox(width: 6),
-          Text(
-            '${networkState.label} ${phase.name}',
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
+  Future<void> _openCamera() async {
+    if (!mounted || _openingCamera) {
+      return;
+    }
+    _openingCamera = true;
+    await Navigation.push(context, appRoutes: AppRoutes.cameraPreview);
+    _openingCamera = false;
   }
 }

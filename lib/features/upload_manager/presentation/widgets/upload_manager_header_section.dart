@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/utils/extension.dart';
 
 import '/features/upload_manager/domain/entities/sync_status.dart';
 import '/features/upload_manager/presentation/widgets/upload_manager/sync_status_chip.dart';
@@ -13,6 +14,7 @@ class UploadManagerHeaderSection extends StatelessWidget {
     required this.isPaused,
     required this.onPauseResume,
     required this.uploadSpeedMbps,
+    required this.hasItems,
     super.key,
   });
 
@@ -22,22 +24,34 @@ class UploadManagerHeaderSection extends StatelessWidget {
   final bool isPaused;
   final VoidCallback onPauseResume;
   final double? uploadSpeedMbps;
+  final bool hasItems;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Center(
-          child: SyncStatusChip(networkLabel: networkLabel, phase: phase),
+        Text(
+          context.loc.networkStatusTitle.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Color(0xFF7C8FB4),
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.2,
+          ),
         ),
-        const SizedBox(height: 12),
-        UploadSummaryCard(
-          summary: summary,
-          isPaused: isPaused,
-          onPauseResume: onPauseResume,
-          uploadSpeedMbps: uploadSpeedMbps,
-        ),
+        const SizedBox(height: 10),
+        SyncStatusChip(networkLabel: networkLabel, phase: phase),
+        if (hasItems) ...[
+          const SizedBox(height: 12),
+          UploadSummaryCard(
+            summary: summary,
+            isPaused: isPaused,
+            onPauseResume: onPauseResume,
+            uploadSpeedMbps: uploadSpeedMbps,
+          ),
+        ],
       ],
     );
   }

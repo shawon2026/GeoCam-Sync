@@ -19,11 +19,14 @@ class UploadSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uploadedPercent = (summary.completion * 100).round();
+    final remainingPercent = (100 - uploadedPercent).clamp(0, 100);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
@@ -31,22 +34,22 @@ class UploadSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'BATCH SYNC PROGRESS',
-                  style: TextStyle(
+                  context.loc.uploadManagerBatchSyncProgress.toUpperCase(),
+                  style: const TextStyle(
                     color: Color(0xFF64748B),
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    letterSpacing: 1.1,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
               Text(
-                '${(summary.completion * 100).round()}%',
+                '$uploadedPercent%',
                 style: const TextStyle(
                   color: Color(0xFF475569),
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -55,11 +58,15 @@ class UploadSummaryCard extends StatelessWidget {
           const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: summary.completion,
-              minHeight: 6,
-              backgroundColor: const Color(0xFFE2E8F0),
-              valueColor: const AlwaysStoppedAnimation(Color(0xFF4B82FF)),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: summary.completion),
+              duration: const Duration(milliseconds: 300),
+              builder: (context, value, _) => LinearProgressIndicator(
+                value: value,
+                minHeight: 7,
+                backgroundColor: const Color(0xFFE2E8F0),
+                valueColor: const AlwaysStoppedAnimation(Color(0xFF3B82F6)),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -67,11 +74,12 @@ class UploadSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '${summary.uploadedItems}/${summary.totalItems} ${context.loc.uploadSummaryUploaded}',
+                  '${context.loc.uploadSummaryUploaded}: $uploadedPercent%  '
+                  '${context.loc.uploadSummaryPending}: $remainingPercent%',
                   style: const TextStyle(
                     color: Color(0xFF64748B),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -106,6 +114,16 @@ class UploadSummaryCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${context.loc.uploadSummaryUploaded}: ${summary.uploadedItems}   '
+            '${context.loc.uploadSummaryPending}: ${summary.pendingItems}',
+            style: const TextStyle(
+              color: Color(0xFF94A3B8),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

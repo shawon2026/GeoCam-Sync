@@ -10,15 +10,12 @@ class PendingUploadList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: items
-          .map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: PendingUploadTile(item: item),
-            ),
-          )
-          .toList(),
+    return ListView.separated(
+      itemCount: items.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) => PendingUploadTile(item: items[index]),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
     );
   }
 }

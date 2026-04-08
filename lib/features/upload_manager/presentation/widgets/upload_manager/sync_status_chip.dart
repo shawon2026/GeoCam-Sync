@@ -14,29 +14,74 @@ class SyncStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final (Color dotColor, Color borderColor, Color bgColor) = switch (phase) {
+      SyncPhase.uploading => (
+        const Color(0xFF10B981),
+        const Color(0xFF86EFAC),
+        const Color(0xFFF0FDF4),
+      ),
+      SyncPhase.waiting => (
+        const Color(0xFFF59E0B),
+        const Color(0xFFFDE68A),
+        const Color(0xFFFFFBEB),
+      ),
+      SyncPhase.retrying => (
+        const Color(0xFFF97316),
+        const Color(0xFFFECACA),
+        const Color(0xFFFFF7ED),
+      ),
+      SyncPhase.completed => (
+        const Color(0xFF22C55E),
+        const Color(0xFF86EFAC),
+        const Color(0xFFF0FDF4),
+      ),
+      _ => (
+        const Color(0xFF0EA5E9),
+        const Color(0xFFBAE6FD),
+        const Color(0xFFF0F9FF),
+      ),
+    };
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0FDF4),
+        color: bgColor,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFFBBF7D0)),
+        border: Border.all(color: borderColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.circle, size: 10, color: Color(0xFF22C58B)),
+          Icon(Icons.circle, size: 9, color: dotColor),
           const SizedBox(width: 8),
           Text(
-            '$networkLabel  ${phase.name.toUpperCase()}',
-            style: const TextStyle(
-              color: Color(0xFF15803D),
+            '$networkLabel  ${_phaseLabel(phase)}',
+            style: TextStyle(
+              color: dotColor,
               fontSize: 11.5,
               fontWeight: FontWeight.w800,
-              letterSpacing: 0.7,
+              letterSpacing: 1,
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _phaseLabel(SyncPhase phase) {
+    switch (phase) {
+      case SyncPhase.uploading:
+        return 'UPLOADING';
+      case SyncPhase.retrying:
+        return 'RETRYING';
+      case SyncPhase.waiting:
+        return 'WAITING';
+      case SyncPhase.paused:
+        return 'PAUSED';
+      case SyncPhase.completed:
+        return 'READY';
+      case SyncPhase.idle:
+        return 'LINK';
+    }
   }
 }

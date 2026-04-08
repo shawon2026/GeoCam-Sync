@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/utils/extension.dart';
 
 class EmptyUploadState extends StatelessWidget {
   const EmptyUploadState({required this.message, super.key});
@@ -23,6 +24,16 @@ class EmptyUploadState extends StatelessWidget {
             color: Color(0xFF94A3B8),
           ),
           const SizedBox(height: 12),
+          Text(
+            context.loc.uploadManagerNoUploadsYet,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF334155),
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
             message,
             textAlign: TextAlign.center,

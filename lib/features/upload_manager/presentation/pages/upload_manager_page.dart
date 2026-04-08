@@ -31,13 +31,6 @@ class UploadManagerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final stateView = UploadManagerStateView(items: items);
 
-    if (items.isEmpty) {
-      return ListView(
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
-        children: [stateView],
-      );
-    }
-
     return ListView(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
       children: [
@@ -48,6 +41,7 @@ class UploadManagerPage extends StatelessWidget {
           isPaused: isPaused,
           onPauseResume: onPauseResume,
           uploadSpeedMbps: uploadSpeedMbps,
+          hasItems: items.isNotEmpty,
         ),
         const SizedBox(height: 18),
         UploadManagerContentSection(items: items, stateView: stateView),

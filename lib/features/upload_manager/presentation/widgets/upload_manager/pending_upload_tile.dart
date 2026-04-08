@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+import '/core/constants/upload_constants.dart';
+import '/core/utils/extension.dart';
 import '/features/upload_manager/domain/entities/upload_item.dart';
 
 class PendingUploadTile extends StatelessWidget {
@@ -76,9 +78,9 @@ class PendingUploadTile extends StatelessWidget {
                       ),
                     ),
                     if (item.status == UploadItemStatus.uploading)
-                      Text(
-                        '${_speedLabel(item.progress)} MB/s',
-                        style: const TextStyle(
+                    Text(
+                      '${_speedLabel(item.progress)} MB/s',
+                      style: const TextStyle(
                           color: Color(0xFF57A6FF),
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
@@ -111,7 +113,7 @@ class PendingUploadTile extends StatelessWidget {
                   const SizedBox(height: 6),
                 ],
                 Text(
-                  visual.label(item),
+                  visual.label(context, item),
                   style: TextStyle(
                     color: visual.color,
                     fontSize: 11.5,
@@ -134,42 +136,44 @@ class PendingUploadTile extends StatelessWidget {
           color: const Color(0xFF7E8AA8),
           icon: Icons.schedule,
           isMuted: false,
-          label: (_) => 'IN QUEUE',
+          label: (context, _) => context.loc.uploadManagerInQueue,
         );
       case UploadItemStatus.uploading:
         return _UploadTileVisual(
           color: const Color(0xFF57A6FF),
           icon: Icons.cloud_upload_outlined,
           isMuted: false,
-          label: (item) => 'UPLOADING ${(item.progress * 100).round()}%',
+          label: (context, item) =>
+              '${context.loc.uploadManagerUploadingNow} ${(item.progress * 100).round()}%',
         );
       case UploadItemStatus.waiting:
         return _UploadTileVisual(
           color: const Color(0xFFF7B955),
           icon: Icons.wifi_find_rounded,
           isMuted: false,
-          label: (_) => 'WAITING FOR CONNECTION',
+          label: (context, _) => context.loc.uploadManagerWaitingNetworkIssue,
         );
       case UploadItemStatus.synced:
         return _UploadTileVisual(
           color: const Color(0xFF00C17C),
           icon: Icons.check_circle_outline,
           isMuted: true,
-          label: (_) => 'SYNCED',
+          label: (context, _) => context.loc.uploadManagerSynced,
         );
       case UploadItemStatus.failed:
         return _UploadTileVisual(
           color: const Color(0xFFFF6B6B),
           icon: Icons.wifi_tethering_error_rounded,
           isMuted: false,
-          label: (item) => 'RETRYING... (ATTEMPT ${item.retryCount + 1}/5)',
+          label: (context, item) =>
+              '${context.loc.uploadManagerRetrying} (${context.loc.uploadManagerAttempt} ${item.retryCount + 1}/${UploadConstants.maxRetryCount + 1})',
         );
       case UploadItemStatus.paused:
         return _UploadTileVisual(
           color: const Color(0xFF7C83FD),
           icon: Icons.pause_circle_outline,
           isMuted: false,
-          label: (_) => 'PAUSED BY USER',
+          label: (context, _) => context.loc.uploadManagerPausedByUser,
         );
     }
   }
@@ -203,5 +207,5 @@ class _UploadTileVisual {
   final Color color;
   final IconData icon;
   final bool isMuted;
-  final String Function(UploadItem item) label;
+  final String Function(BuildContext context, UploadItem item) label;
 }
