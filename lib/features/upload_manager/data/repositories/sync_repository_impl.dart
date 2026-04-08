@@ -110,6 +110,36 @@ class SyncRepositoryImpl implements SyncRepository {
           await _localUploadDataSource.markFirstUploadingSynced();
           await _localUploadDataSource.deleteSyncedFileLocally(item.id);
           processedItems++;
+        } on DummyUploadException catch (error) {
+          if (error.isNetworkIssue) {
+            await _localUploadDataSource.markActiveItemsWaiting();
+            _statusController.add(
+              SyncStatus(
+                networkState: NetworkState.unstable,
+                phase: SyncPhase.waiting,
+                isBackgroundWorkerRegistered: true,
+                message: 'Waiting (Network Issue)',
+                uploadSpeedMbps: null,
+              ),
+            );
+            await Future<void>.delayed(UploadConstants.retryDelay);
+            await _localUploadDataSource.markWaitingItemsPending();
+            continue;
+          }
+
+          await _localUploadDataSource.markCurrentUploadingFailed();
+          _statusController.add(
+            SyncStatus(
+              networkState: networkState,
+              phase: SyncPhase.retrying,
+              isBackgroundWorkerRegistered: true,
+              message: 'Retrying ${item.fileName}',
+              uploadSpeedMbps: null,
+            ),
+          );
+          await Future<void>.delayed(UploadConstants.retryDelay);
+          await _localUploadDataSource.markFailedItemsForRetry();
+          continue;
         } catch (_) {
           await _localUploadDataSource.markCurrentUploadingFailed();
           _statusController.add(
@@ -117,11 +147,13 @@ class SyncRepositoryImpl implements SyncRepository {
               networkState: networkState,
               phase: SyncPhase.retrying,
               isBackgroundWorkerRegistered: true,
-              message: 'Upload failed. Will retry automatically',
+              message: 'Retrying ${item.fileName}',
               uploadSpeedMbps: null,
             ),
           );
-          return const Right(unit);
+          await Future<void>.delayed(UploadConstants.retryDelay);
+          await _localUploadDataSource.markFailedItemsForRetry();
+          continue;
         }
       }
 
