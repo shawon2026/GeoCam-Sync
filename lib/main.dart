@@ -3,13 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/constants/api_urls.dart';
 import '/core/di/service_locator.dart';
+import '/core/localization/locale_manager.dart';
 import '/core/presentation/widgets/global_network_listener.dart';
 import '/core/routes/navigation.dart';
 import '/core/theme/theme_manager.dart';
 import '/core/utils/app_version.dart';
 import '/core/utils/preferences_helper.dart';
 import '/features/splash/presentation/pages/splash_page.dart';
-// import '/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 import 'core/presentation/widgets/app_starter_error.dart';
 
 void main() async {
@@ -44,6 +45,7 @@ Future<void> initServices() async {
   const flavorType = String.fromEnvironment('flavorType', defaultValue: 'DEV');
   ApiUrlExtention.setUrl(flavorType == 'DEV' ? UrlLink.isDev : UrlLink.isLive);
   await PrefHelper.init();
+  await LocaleManager.instance.loadSavedLocale();
   await AppVersion.getVersion();
 }
 
@@ -52,41 +54,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(360, 800),
-      minTextAdapt: true,
-      builder: (ctx, child) {
-        return MaterialApp(
-          title: 'GeoCam Sync',
-          navigatorKey: Navigation.key,
-          debugShowCheckedModeBanner: false,
-
-          // Localization
-          // supportedLocales: AppLocalizations.supportedLocales,
-          // localizationsDelegates: AppLocalizations.localizationsDelegates,
-          locale: _getLocale(),
-
-          // Theme
-          theme: ThemeManager().themeData,
-
-          // Network listener wrapper
-          builder: (context, child) {
-            return GlobalNetworkListener(child: child ?? const SizedBox());
+    return ValueListenableBuilder<Locale>(
+      valueListenable: LocaleManager.instance.localeNotifier,
+      builder: (context, locale, _) {
+        return ScreenUtilInit(
+          designSize: const Size(360, 800),
+          minTextAdapt: true,
+          builder: (ctx, child) {
+            return MaterialApp(
+              title: 'GeoCam Sync',
+              navigatorKey: Navigation.key,
+              debugShowCheckedModeBanner: false,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              locale: locale,
+              theme: ThemeManager().themeData,
+              builder: (context, child) {
+                return GlobalNetworkListener(child: child ?? const SizedBox());
+              },
+              home: _getInitialPage(),
+            );
           },
-
-          // Initial route
-          home: _getInitialPage(),
         );
       },
     );
-  }
-
-  /// Get locale based on user preference
-  Locale _getLocale() {
-    final languageCode = PrefHelper.instance.getLanguage();
-    return languageCode == 1
-        ? const Locale('en', 'US')
-        : const Locale('bn', 'BD');
   }
 
   /// Determine initial page
