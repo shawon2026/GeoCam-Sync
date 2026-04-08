@@ -8,7 +8,7 @@ import '/core/routes/navigation.dart';
 import '/core/theme/theme_manager.dart';
 import '/core/utils/app_version.dart';
 import '/core/utils/preferences_helper.dart';
-import '/features/home/presentation/pages/home_page.dart';
+import '/features/splash/presentation/pages/splash_page.dart';
 // import '/l10n/app_localizations.dart';
 import 'core/presentation/widgets/app_starter_error.dart';
 
@@ -35,9 +35,7 @@ void main() async {
     debugPrint('❌ App initialization failed: $e');
     debugPrint('Stack trace: $stackTrace');
 
-    runApp(
-        MaterialApp(home: AppStarterError(error: e.toString())),
-      );
+    runApp(MaterialApp(home: AppStarterError(error: e.toString())));
   }
 }
 
@@ -76,13 +74,12 @@ class MyApp extends StatelessWidget {
             return GlobalNetworkListener(child: child ?? const SizedBox());
           },
 
-          // Initial route based on auth status
+          // Initial route
           home: _getInitialPage(),
         );
       },
     );
   }
-
 
   /// Get locale based on user preference
   Locale _getLocale() {
@@ -92,12 +89,8 @@ class MyApp extends StatelessWidget {
         : const Locale('bn', 'BD');
   }
 
-  /// Determine initial page based on authentication status
+  /// Determine initial page
   Widget _getInitialPage() {
-    // final isLoggedIn = sl<AuthLocalDataSource>().isLoggedIn();
-    // if (isLoggedIn) {
-    //   return const HomePage();
-    // }
-    return const HomePage();
+    return const SplashPage();
   }
 }
