@@ -36,6 +36,9 @@ class AttendanceState extends Equatable {
   final bool isSubmitting;
   final int gateVersion;
 
+  bool get isOverlayLoading =>
+      status == AttendanceViewStatus.loading || isSubmitting;
+
   AttendanceState copyWith({
     AttendanceViewStatus? status,
     String? message,

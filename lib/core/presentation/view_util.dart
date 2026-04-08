@@ -5,14 +5,15 @@ import '../theme/app_colors.dart';
 import 'widgets/global_text.dart';
 
 class ViewUtil {
-  static snackbar(
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackbar(
     String msg, {
     String? btnName,
     void Function()? onPressed,
     BuildContext? context,
   }) {
-    return ScaffoldMessenger.of(context ?? Navigation.key.currentContext!)
-        .showSnackBar(
+    return ScaffoldMessenger.of(
+      context ?? Navigation.key.currentContext!,
+    ).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         content: GlobalText(
@@ -22,8 +23,9 @@ class ViewUtil {
         ),
         action: SnackBarAction(
           label: btnName ?? '',
-          textColor:
-              btnName == null ? Colors.transparent : AppColors.white.color,
+          textColor: btnName == null
+              ? Colors.transparent
+              : AppColors.white.color,
           onPressed: onPressed ?? () {},
         ),
       ),
@@ -31,7 +33,7 @@ class ViewUtil {
   }
 
   // global alert dialog
-  static Future alertDialog({
+  static Future<void> alertDialog({
     Widget? title,
     required Widget content,
     List<Widget>? actions,
@@ -44,6 +46,7 @@ class ViewUtil {
     // flutter defined function.
     await showDialog(
       context: context ?? Navigation.key.currentContext!,
+      useRootNavigator: true,
       barrierDismissible: barrierDismissible ?? true,
       builder: (context) {
         // return object of type Dialog.
@@ -62,7 +65,7 @@ class ViewUtil {
     );
   }
 
-  static bottomSheet({
+  static Future<dynamic> bottomSheet({
     required BuildContext context,
     bool? isDismissable,
     required Widget content,
@@ -95,19 +98,37 @@ class ViewUtil {
     );
   }
 
-  static showLoader(BuildContext context) {
-    return alertDialog(
+  static Future<void> showLoader(BuildContext context) {
+    return showDialog<void>(
       context: context,
-      alertBackgroundColor: AppColors.white.color,
-      content: const SizedBox(
-        height: 48,
-        width: 48,
-        child: Center(child: CircularProgressIndicator()),
-      ),
+      useRootNavigator: true,
+      barrierDismissible: false,
+      barrierColor: Colors.black45,
+      builder: (dialogContext) {
+        return const PopScope(
+          canPop: false,
+          child: Center(
+            child: SizedBox(
+              height: 56,
+              width: 56,
+              child: Card(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  static hideLoader(BuildContext context) {
-    Navigation.pop(context);
+  static void hideLoader(BuildContext context) {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    if (navigator.canPop()) {
+      navigator.pop();
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/di/service_locator.dart';
+import '/core/presentation/view_util.dart';
 import '/core/presentation/widgets/global_appbar.dart';
 import '/core/routes/app_routes.dart';
 import '/core/routes/navigation.dart';
@@ -23,18 +24,29 @@ class AttendanceScreen extends StatefulWidget {
 class _AttendanceScreenState extends State<AttendanceScreen>
     with WidgetsBindingObserver {
   bool _isGateDialogVisible = false;
+  bool _isLoaderVisible = false;
   late final AttendanceCubit _cubit;
 
   @override
   void initState() {
     super.initState();
-    _cubit = sl<AttendanceCubit>()..initialize();
+    _cubit = sl<AttendanceCubit>();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _cubit.initialize();
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (_isLoaderVisible) {
+      ViewUtil.hideLoader(context);
+      _isLoaderVisible = false;
+    }
     _cubit.close();
     super.dispose();
   }
@@ -60,7 +72,13 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     return BlocProvider.value(
       value: _cubit,
       child: BlocConsumer<AttendanceCubit, AttendanceState>(
+        listenWhen: (previous, current) =>
+            previous.message != current.message ||
+            previous.gateVersion != current.gateVersion ||
+            previous.isOverlayLoading != current.isOverlayLoading,
         listener: (context, state) {
+          _syncLoader(state);
+
           if (state.message != null) {
             ScaffoldMessenger.of(
               context,
@@ -74,69 +92,108 @@ class _AttendanceScreenState extends State<AttendanceScreen>
               actionText: context.loc.goToSettings,
               onAction: _cubit.openPermissionSettings,
             );
+            return;
+          }
+
+          if (state.status == AttendanceViewStatus.serviceBlocked) {
+            _showGateDialog(
+              title: context.loc.locationServiceRequiredTitle,
+              message: context.loc.locationServiceRequired,
+              actionText: context.loc.goToSettings,
+              onAction: _cubit.openServiceSettings,
+            );
           }
         },
         builder: (context, state) {
           final cubit = context.read<AttendanceCubit>();
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFF3F5F9),
-            appBar: GlobalAppBar(
-              title: context.loc.attendanceTitle,
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    Navigation.push(
-                      context,
-                      appRoutes: AppRoutes.attendanceHistory,
-                    );
-                  },
-                  icon: const Icon(Icons.history),
-                ),
-              ],
-            ),
-            body: RefreshIndicator(
-              onRefresh: cubit.reload,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  OfficeContextCard(
-                    hasOfficeLocation: state.officeLocation != null,
-                    officeCoordinateText: state.officeLocation == null
+          return PopScope(
+            canPop: !state.isOverlayLoading,
+            child: Scaffold(
+              backgroundColor: const Color(0xFFF3F5F9),
+              appBar: GlobalAppBar(
+                title: context.loc.attendanceTitle,
+                actions: [
+                  IconButton(
+                    onPressed: state.isOverlayLoading
                         ? null
-                        : 'Lat : ${state.officeLocation!.latitude.toStringAsFixed(4)},  Lon : ${state.officeLocation!.longitude.toStringAsFixed(4)}',
-                    onSetOfficeLocation: cubit.setOfficeLocationFromCurrent,
+                        : () {
+                            Navigation.push(
+                              context,
+                              appRoutes: AppRoutes.attendanceHistory,
+                            );
+                          },
+                    icon: const Icon(Icons.history),
                   ),
-                  const SizedBox(height: 24),
-                  DistanceTrackerCard(
-                    distanceMeters: state.distanceMeters,
-                    inRange: state.eligibility?.inRange ?? false,
-                  ),
-                  const SizedBox(height: 10),
-                  AttendanceStatusLabel(text: context.loc.attendanceRuleLabel),
-                  const SizedBox(height: 20),
-                  AttendanceActionCard(
-                    title: _title(context, state),
-                    subtitle: _subtitle(context, state),
-                    buttonLabel: _button(context, state),
-                    enabled: _isActionEnabled(state),
-                    isLoading: state.isSubmitting,
-                    onMark: () => _onMarkTap(context, cubit, state),
-                    availabilityText: context.loc.attendanceAvailabilityWindow,
-                    showLockIcon: !_isActionEnabled(state),
-                  ),
-                  const SizedBox(height: 12),
-                  if (state.todayRecord != null)
-                    Text(
-                      '${context.loc.attendanceMarkedAt}: ${DateTimeHelper.toDateTimeLabel(state.todayRecord!.markedAt)}',
-                    ),
                 ],
+              ),
+              body: RefreshIndicator(
+                onRefresh: cubit.reload,
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  physics: state.isOverlayLoading
+                      ? const NeverScrollableScrollPhysics()
+                      : const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    OfficeContextCard(
+                      hasOfficeLocation: state.officeLocation != null,
+                      officeCoordinateText: state.officeLocation == null
+                          ? null
+                          : 'Lat : ${state.officeLocation!.latitude.toStringAsFixed(4)},  Lon : ${state.officeLocation!.longitude.toStringAsFixed(4)}',
+                      onSetOfficeLocation: cubit.setOfficeLocationFromCurrent,
+                    ),
+                    const SizedBox(height: 24),
+                    DistanceTrackerCard(
+                      distanceMeters: state.distanceMeters,
+                      inRange: state.eligibility?.inRange ?? false,
+                    ),
+                    const SizedBox(height: 10),
+                    AttendanceStatusLabel(
+                      text: context.loc.attendanceRuleLabel,
+                    ),
+                    const SizedBox(height: 20),
+                    AttendanceActionCard(
+                      title: _title(context, state),
+                      subtitle: _subtitle(context, state),
+                      buttonLabel: _button(context, state),
+                      enabled: _isActionEnabled(state),
+                      isLoading: state.isSubmitting,
+                      onMark: () => _onMarkTap(context, cubit, state),
+                      availabilityText:
+                          context.loc.attendanceAvailabilityWindow,
+                      showLockIcon: !_isActionEnabled(state),
+                    ),
+                    const SizedBox(height: 12),
+                    if (state.todayRecord != null)
+                      Text(
+                        '${context.loc.attendanceMarkedAt}: ${DateTimeHelper.toDateTimeLabel(state.todayRecord!.markedAt)}',
+                      ),
+                  ],
+                ),
               ),
             ),
           );
         },
       ),
     );
+  }
+
+  void _syncLoader(AttendanceState state) {
+    if (!mounted) {
+      return;
+    }
+
+    if (state.isOverlayLoading && !_isLoaderVisible) {
+      _isLoaderVisible = true;
+      ViewUtil.showLoader(context).then((_) {
+        _isLoaderVisible = false;
+      });
+      return;
+    }
+
+    if (!state.isOverlayLoading && _isLoaderVisible) {
+      ViewUtil.hideLoader(context);
+    }
   }
 
   Future<void> _showGateDialog({
