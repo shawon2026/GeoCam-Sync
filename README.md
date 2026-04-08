@@ -99,3 +99,24 @@ flutter run
 - ARB files: `lib/l10n/intl_en.arb`, `lib/l10n/intl_bn.arb`
 - Generated files come from `flutter gen-l10n`
 - `pubspec.yaml` uses `flutter: generate: true`
+
+## App Icon (Launcher)
+
+This project uses `flutter_launcher_icons` to generate Android and iOS launcher icons.
+
+Quick steps used:
+
+1. Place icon asset at `assets/images/logo.png`
+2. Configure in `pubspec.yaml`:
+   - `flutter_launcher_icons` in `dev_dependencies`
+   - `flutter_launcher_icons` config with:
+     - `android: true`
+     - `ios: true`
+     - `image_path: assets/images/logo.png`
+     - `remove_alpha_ios: true`
+3. Run:
+
+```bash
+flutter pub get
+dart run flutter_launcher_icons
+```
