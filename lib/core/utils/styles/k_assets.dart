@@ -1,17 +1,17 @@
-enum KAssetName { oil, closeBottom }
+enum KAssetName {
+  logoPng,
+  logoJpg,
+}
 
-extension AssetsExtention on KAssetName {
+extension AssetsExtension on KAssetName {
   String get imagePath {
-    String rootPath = 'assets';
-    String svgDir = '$rootPath/svg';
-    String imageDir = '$rootPath/images';
-
+    const String _rootPath = 'assets';
+  const String _imagesDir = '$_rootPath/images';
     switch (this) {
-      case KAssetName.oil:
-        return '$imageDir/oil.png';
-      case KAssetName.closeBottom:
-        return '$svgDir/close_bottom.svg';
+      case KAssetName.logoPng:
+        return '$_imagesDir/logo.png';
+      case KAssetName.logoJpg:
+        return '$_imagesDir/logo.jpg';
     }
   }
 }
-
