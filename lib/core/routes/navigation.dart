@@ -14,13 +14,12 @@ class Navigation {
   static Future push<T extends Object>(
     context, {
     required AppRoutes appRoutes,
-    String? routeName,
     T? arguments,
   }) {
     return Navigator.push(
       context,
       MaterialPageRoute(
-        settings: RouteSettings(name: routeName),
+        settings: RouteSettings(name: appRoutes.name),
         builder: (context) => appRoutes.buildWidget(arguments: arguments),
       ),
     );
@@ -31,13 +30,12 @@ class Navigation {
   static Future pushAndRemoveUntil<T extends Object>(
     context, {
     required AppRoutes appRoutes,
-    String? routeName,
     T? arguments,
   }) {
     return Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        settings: RouteSettings(name: routeName),
+        settings: RouteSettings(name: appRoutes.name),
         builder: (context) => appRoutes.buildWidget(arguments: arguments),
       ),
       (route) => false,
@@ -56,13 +54,12 @@ class Navigation {
   static Future pushReplacement<T extends Object>(
     context, {
     required AppRoutes appRoutes,
-    String? routeName,
     T? arguments,
   }) {
     return Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        settings: RouteSettings(name: routeName),
+        settings: RouteSettings(name: appRoutes.name),
         builder: (BuildContext context) =>
             appRoutes.buildWidget(arguments: arguments),
       ),
@@ -74,13 +71,12 @@ class Navigation {
   static Future pushAndRemoveSpecificScreen<T extends Object>(
     context, {
     required AppRoutes appRoutes,
-    String? routeName,
     T? arguments,
   }) {
     return Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        settings: RouteSettings(name: routeName),
+        settings: RouteSettings(name: appRoutes.name),
         builder: (context) => appRoutes.buildWidget(arguments: arguments),
       ),
       (route) => route.isFirst,
@@ -102,5 +98,3 @@ class Navigation {
     return Navigator.pop(context, result);
   }
 }
-
- 
