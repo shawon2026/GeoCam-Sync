@@ -83,3 +83,5 @@ coverage/
 # Temporary / patch leftovers
 *.orig
 *.rej
+/lib/features/splash/data/.gitkeep
+/lib/features/splash/domain/.gitkeep
