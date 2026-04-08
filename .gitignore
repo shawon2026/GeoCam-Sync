@@ -71,6 +71,7 @@ config.json
 .agents/
 .codex
 .codex/
+/tooling/
 
 # Local Flutter tool metadata (project-scoped)
 .metadata

@@ -79,6 +79,8 @@ This keeps API contract and local storage contract clean and scalable.
 ## 📚 Documentation (Work in Progress)
 
 - Index → `docs/README.md`
+- Agent Journey → `docs/agent-journey/README.md`
+- Generative AI Usage → `docs/agent-journey/generative-ai-usage.md`
 - Language Policy → `docs/rules/language-policy.md`
 - Architecture → `docs/architecture/overview.md`
 - Setup & Environment → `docs/setup/environment.md`
