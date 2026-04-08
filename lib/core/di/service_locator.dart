@@ -46,10 +46,15 @@ import '/features/upload_manager/domain/repositories/camera_repository.dart';
 import '/features/upload_manager/domain/repositories/sync_repository.dart';
 import '/features/upload_manager/domain/repositories/upload_repository.dart';
 import '/features/upload_manager/domain/usecases/camera/capture_photo.dart';
+import '/features/upload_manager/domain/usecases/camera/delete_capture_files.dart';
 import '/features/upload_manager/domain/usecases/camera/focus_at_point.dart';
+import '/features/upload_manager/domain/usecases/camera/get_zoom_bounds.dart';
 import '/features/upload_manager/domain/usecases/camera/initialize_camera.dart';
+import '/features/upload_manager/domain/usecases/camera/pause_camera_preview.dart';
+import '/features/upload_manager/domain/usecases/camera/resume_camera_preview.dart';
 import '/features/upload_manager/domain/usecases/camera/set_zoom_level.dart';
 import '/features/upload_manager/domain/usecases/camera/switch_camera.dart';
+import '/features/upload_manager/domain/usecases/camera/toggle_flash.dart';
 import '/features/upload_manager/domain/usecases/sync/handle_network_recovery.dart';
 import '/features/upload_manager/domain/usecases/sync/process_upload_queue.dart';
 import '/features/upload_manager/domain/usecases/sync/retry_failed_uploads.dart';
@@ -189,9 +194,14 @@ Future<void> initDependencies() async {
 
   sl.registerLazySingleton(() => InitializeCamera(sl()));
   sl.registerLazySingleton(() => CapturePhoto(sl()));
+  sl.registerLazySingleton(() => DeleteCaptureFiles(sl()));
   sl.registerLazySingleton(() => SetZoomLevel(sl()));
   sl.registerLazySingleton(() => FocusAtPoint(sl()));
   sl.registerLazySingleton(() => SwitchCamera(sl()));
+  sl.registerLazySingleton(() => GetZoomBounds(sl()));
+  sl.registerLazySingleton(() => ToggleFlash(sl()));
+  sl.registerLazySingleton(() => PauseCameraPreview(sl()));
+  sl.registerLazySingleton(() => ResumeCameraPreview(sl()));
   sl.registerLazySingleton(() => CreateUploadBatch(sl()));
   sl.registerLazySingleton(() => AddFilesToQueue(sl()));
   sl.registerLazySingleton(() => GetPendingUploads(sl()));
@@ -221,6 +231,11 @@ Future<void> initDependencies() async {
       setZoomLevel: sl(),
       focusAtPoint: sl(),
       switchCamera: sl(),
+      getZoomBounds: sl(),
+      toggleFlash: sl(),
+      pauseCameraPreview: sl(),
+      resumeCameraPreview: sl(),
+      deleteCaptureFiles: sl(),
     ),
   );
   sl.registerFactory(

@@ -13,27 +13,101 @@ class CameraRepositoryImpl implements CameraRepository {
 
   @override
   Future<Either<Failure, CameraCapture>> capturePhoto() async {
-    return Right(await _dataSource.capturePhoto());
+    try {
+      return Right(await _dataSource.capturePhoto());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, FocusPoint>> focusAtPoint(FocusPoint point) async {
-    return Right(await _dataSource.focusAtPoint(point));
+    try {
+      return Right(await _dataSource.focusAtPoint(point));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> initializeCamera() async {
-    await _dataSource.initializeCamera();
-    return const Right(unit);
+    try {
+      await _dataSource.initializeCamera();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, double>> setZoomLevel(double zoomLevel) async {
-    return Right(await _dataSource.setZoomLevel(zoomLevel));
+    try {
+      return Right(await _dataSource.setZoomLevel(zoomLevel));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, String>> switchCamera() async {
-    return Right(await _dataSource.switchCamera());
+    try {
+      return Right(await _dataSource.switchCamera());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ZoomBounds>> getZoomBounds() async {
+    try {
+      return Right(await _dataSource.getZoomBounds());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> toggleFlash() async {
+    try {
+      return Right(await _dataSource.toggleFlash());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> pausePreview() async {
+    try {
+      await _dataSource.pausePreview();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> resumePreview() async {
+    try {
+      await _dataSource.resumePreview();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deleteCaptureFiles({
+    required String localPath,
+    required String thumbnailPath,
+  }) async {
+    try {
+      await _dataSource.deleteCaptureFiles(
+        localPath: localPath,
+        thumbnailPath: thumbnailPath,
+      );
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 }

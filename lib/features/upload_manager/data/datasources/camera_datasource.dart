@@ -23,6 +23,19 @@ abstract class CameraDataSource {
   Future<FocusPoint> focusAtPoint(FocusPoint point);
 
   Future<String> switchCamera();
+
+  Future<ZoomBounds> getZoomBounds();
+
+  Future<bool> toggleFlash();
+
+  Future<void> pausePreview();
+
+  Future<void> resumePreview();
+
+  Future<void> deleteCaptureFiles({
+    required String localPath,
+    required String thumbnailPath,
+  });
 }
 
 class CameraDataSourceImpl implements CameraDataSource {
@@ -33,6 +46,9 @@ class CameraDataSourceImpl implements CameraDataSource {
   List<CameraDescription> _availableCameras = const [];
   CameraController? _controller;
   double _zoomLevel = 1;
+  double _minZoom = 1;
+  double _maxZoom = 5;
+  bool _flashEnabled = false;
   String _cameraLens = 'rear';
 
   @override
@@ -86,7 +102,11 @@ class CameraDataSourceImpl implements CameraDataSource {
 
   @override
   Future<double> setZoomLevel(double zoomLevel) async {
-    final nextZoom = CameraZoomUtils.clamp(zoomLevel);
+    final nextZoom = CameraZoomUtils.clamp(
+      zoomLevel,
+      min: _minZoom,
+      max: _maxZoom,
+    );
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
       await controller.setZoomLevel(nextZoom);
@@ -104,6 +124,59 @@ class CameraDataSourceImpl implements CameraDataSource {
     _cameraLens = _cameraLens == 'rear' ? 'front' : 'rear';
     await _initializeController(_pickCamera(_cameraLens));
     return _cameraLens;
+  }
+
+  @override
+  Future<ZoomBounds> getZoomBounds() async {
+    return ZoomBounds(minZoom: _minZoom, maxZoom: _maxZoom);
+  }
+
+  @override
+  Future<bool> toggleFlash() async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
+      throw CameraException('uninitialized', 'Camera is not ready');
+    }
+
+    final nextEnabled = !_flashEnabled;
+    await controller.setFlashMode(
+      nextEnabled ? FlashMode.torch : FlashMode.off,
+    );
+    _flashEnabled = nextEnabled;
+    return _flashEnabled;
+  }
+
+  @override
+  Future<void> pausePreview() async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+    await controller.pausePreview();
+  }
+
+  @override
+  Future<void> resumePreview() async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+    await controller.resumePreview();
+  }
+
+  @override
+  Future<void> deleteCaptureFiles({
+    required String localPath,
+    required String thumbnailPath,
+  }) async {
+    final file = File(localPath);
+    if (await file.exists()) {
+      await file.delete();
+    }
+    final thumbnail = File(thumbnailPath);
+    if (await thumbnail.exists()) {
+      await thumbnail.delete();
+    }
   }
 
   CameraDescription _pickCamera(String desiredLens) {
@@ -133,10 +206,12 @@ class CameraDataSourceImpl implements CameraDataSource {
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
     await controller.initialize();
-    final minZoom = await controller.getMinZoomLevel();
-    final maxZoom = await controller.getMaxZoomLevel();
-    _zoomLevel = _zoomLevel.clamp(minZoom, maxZoom);
+    _minZoom = await controller.getMinZoomLevel();
+    _maxZoom = await controller.getMaxZoomLevel();
+    _zoomLevel = _zoomLevel.clamp(_minZoom, _maxZoom);
     await controller.setZoomLevel(_zoomLevel);
+    await controller.setFlashMode(FlashMode.off);
+    _flashEnabled = false;
     _controller = controller;
     _cameraLens = camera.lensDirection == CameraLensDirection.front
         ? 'front'
