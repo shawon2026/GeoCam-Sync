@@ -1,12 +1,20 @@
 {
-
-    "logout_button": "Log out",
-    "note": "Note",
-    "cancel": "Cancel",
-    "yes": "Yes",
-    "delete": "Delete",
-    "item": "You have %d item",
-    "add_address":"Add Adress"
-
-
+  "logout_button": "Log out",
+  "note": "Note",
+  "cancel": "Cancel",
+  "yes": "Yes",
+  "delete": "Delete",
+  "item": "You have %d item",
+  "add_address": "Add Address",
+  "homeAppTitle": "GeoCam Sync",
+  "homeNavigationHubTitle": "Navigation Hub",
+  "homeNavigationHubSubtitle": "Access core tasks quickly from one place: attendance and upload management.",
+  "geoFencedAttendanceTitle": "Geo-Fenced Attendance",
+  "geoFencedAttendanceSubtitle": "Task 1: Mark attendance after location and permission checks.",
+  "openTask1Button": "Open Task 1",
+  "geoFencedAttendancePending": "Geo-Fenced Attendance module is not connected yet.",
+  "uploadManagerTitle": "Upload Manager",
+  "uploadManagerSubtitle": "Task 2: Manage upload queue, progress, retries, and sync flow.",
+  "openTask2Button": "Open Task 2",
+  "uploadManagerPending": "Upload Manager module is not connected yet."
 }

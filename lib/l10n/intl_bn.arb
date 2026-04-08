@@ -1,10 +1,20 @@
 {
-    "logout_button": "লগ আউট",
-    "note": "বিঃদ্রঃ",
-    "cancel": "বাতিল করুন",
-    "yes": "হ্যাঁ",
-    "delete": "মুছে ফেলা",
-    "item": "আপনার কাছে %d টি আইটেম আছে",
-     "add_address":"ঠিকানা যোগ করুন"
-
+  "logout_button": "লগ আউট",
+  "note": "বিঃদ্রঃ",
+  "cancel": "বাতিল করুন",
+  "yes": "হ্যাঁ",
+  "delete": "মুছে ফেলা",
+  "item": "আপনার কাছে %d টি আইটেম আছে",
+  "add_address": "ঠিকানা যোগ করুন",
+  "homeAppTitle": "জিওক্যাম সিঙ্ক",
+  "homeNavigationHubTitle": "নেভিগেশন হাব",
+  "homeNavigationHubSubtitle": "এক জায়গা থেকে দ্রুত প্রয়োজনীয় কাজগুলোতে যান: উপস্থিতি এবং আপলোড ম্যানেজমেন্ট।",
+  "geoFencedAttendanceTitle": "জিও-ফেন্সড উপস্থিতি",
+  "geoFencedAttendanceSubtitle": "টাস্ক ১: লোকেশন ও পারমিশন যাচাইয়ের পর উপস্থিতি দিন।",
+  "openTask1Button": "টাস্ক ১ খুলুন",
+  "geoFencedAttendancePending": "জিও-ফেন্সড উপস্থিতি মডিউল এখনো সংযুক্ত করা হয়নি।",
+  "uploadManagerTitle": "আপলোড ম্যানেজার",
+  "uploadManagerSubtitle": "টাস্ক ২: আপলোড কিউ, প্রগ্রেস, রিট্রাই এবং সিঙ্ক ফ্লো পরিচালনা করুন।",
+  "openTask2Button": "টাস্ক ২ খুলুন",
+  "uploadManagerPending": "আপলোড ম্যানেজার মডিউল এখনো সংযুক্ত করা হয়নি।"
 }

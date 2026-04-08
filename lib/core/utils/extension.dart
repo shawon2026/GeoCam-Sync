@@ -1,10 +1,9 @@
 import 'dart:developer' as darttools show log;
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
-// import '/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'preferences_helper.dart';
-
 
 extension ConvertNum on String {
   static const english = [
@@ -69,7 +68,7 @@ extension StringFormat on String {
 extension Context on BuildContext {
   //this extention is for localization
   //its a shorter version of AppLocalizations
-  // AppLocalizations get loc => AppLocalizations.of(this)!;
+  AppLocalizations get loc => AppLocalizations.of(this)!;
 
   //get media query
   MediaQueryData get mediaQuery => MediaQuery.of(this);
@@ -88,8 +87,8 @@ extension Context on BuildContext {
 extension ValidationExtention on String {
   //Check email is valid or not
   bool get isValidEmail => RegExp(
-        r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
-      ).hasMatch(this);
+    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
+  ).hasMatch(this);
 
   //check mobile number contain special character or not
   bool get isMobileNumberValid =>
@@ -184,10 +183,12 @@ extension FormattedYearMonthDate on String? {
 //This extention sum the value from List<Map<String,dynamic>>
 extension StringToDoubleFoldExtention<T extends List<Map<String, dynamic>>>
     on T {
-  String? get listOfMapStringSum => map(
+  String? get listOfMapStringSum =>
+      map(
         (e) => double.tryParse(e.values.first?.toString() ?? ''),
       ).toList().fold('0', (previous, current) {
-        var sum = double.parse(previous?.toString() ?? '0') +
+        var sum =
+            double.parse(previous?.toString() ?? '0') +
             double.parse(current?.toString() ?? '0');
         return sum.toString().parseToDouble().toStringAsFixed(3);
       });
@@ -198,9 +199,9 @@ extension CapitalizeExtention on String {
   String toCapitalized() =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
   String toTitleCase() => replaceAll(
-        RegExp(' +'),
-        ' ',
-      ).split(' ').map((str) => str.toCapitalized()).join(' ');
+    RegExp(' +'),
+    ' ',
+  ).split(' ').map((str) => str.toCapitalized()).join(' ');
 }
 
 extension LastPathComponent on String {
@@ -223,10 +224,10 @@ extension IterableExtension<T> on Iterable<T> {
 /// it will use for finding data  from list based on same date
 extension Iterables<E> on Iterable<E> {
   Map<K, List<E>> groupBy<K>(K Function(E) keyFunction) => fold(
-        <K, List<E>>{},
-        (Map<K, List<E>> map, E element) =>
-            map..putIfAbsent(keyFunction(element), () => <E>[]).add(element),
-      );
+    <K, List<E>>{},
+    (Map<K, List<E>> map, E element) =>
+        map..putIfAbsent(keyFunction(element), () => <E>[]).add(element),
+  );
 }
 
 extension DateTimeGreater on DateTime {
@@ -256,4 +257,3 @@ extension FormatDuration on int {
     // }
   }
 }
-
