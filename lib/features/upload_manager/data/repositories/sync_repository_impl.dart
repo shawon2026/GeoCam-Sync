@@ -85,8 +85,7 @@ class SyncRepositoryImpl implements SyncRepository {
       await _localUploadDataSource.markWaitingItemsPending();
       await _localUploadDataSource.markFailedItemsForRetry();
 
-      var processedItems = 0;
-      while (processedItems < UploadConstants.maxConcurrentUploads) {
+      while (true) {
         final latestState = await _networkMonitorDataSource.getCurrentState();
         if (!latestState.canUpload) {
           await _localUploadDataSource.markActiveItemsWaiting();
@@ -128,7 +127,6 @@ class SyncRepositoryImpl implements SyncRepository {
           await _remoteUploadDataSource.upload(item);
           await _localUploadDataSource.markFirstUploadingSynced();
           await _localUploadDataSource.cleanupSyncedSourceFile(item.id);
-          processedItems++;
         } on DummyUploadException catch (error) {
           if (error.isNetworkIssue) {
             await _localUploadDataSource.markActiveItemsWaiting();
