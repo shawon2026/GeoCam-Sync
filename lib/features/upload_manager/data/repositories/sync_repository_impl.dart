@@ -56,8 +56,12 @@ class SyncRepositoryImpl implements SyncRepository {
 
   @override
   Future<Either<Failure, Unit>> handleNetworkRecovery() async {
-    await retryFailedUploads();
-    return const Right(unit);
+    try {
+      await retryFailedUploads();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
@@ -212,6 +216,17 @@ class SyncRepositoryImpl implements SyncRepository {
         ),
       );
       return const Right(unit);
+    } catch (e) {
+      _statusController.add(
+        const SyncStatus(
+          networkState: NetworkState.unstable,
+          phase: SyncPhase.waiting,
+          isBackgroundWorkerRegistered: true,
+          message: 'Sync failed, waiting for retry',
+          uploadSpeedMbps: null,
+        ),
+      );
+      return Left(ServerFailure(message: e.toString()));
     } finally {
       _isProcessing = false;
     }
@@ -219,33 +234,50 @@ class SyncRepositoryImpl implements SyncRepository {
 
   @override
   Future<Either<Failure, Unit>> retryFailedUploads() async {
-    await _localUploadDataSource.markFailedItemsForRetry();
-    _statusController.add(
-      const SyncStatus(
-        networkState: NetworkState.unstable,
-        phase: SyncPhase.retrying,
-        isBackgroundWorkerRegistered: true,
-        message: 'Retrying failed uploads',
-        uploadSpeedMbps: null,
-      ),
-    );
-    return const Right(unit);
+    try {
+      await _localUploadDataSource.markFailedItemsForRetry();
+      _statusController.add(
+        const SyncStatus(
+          networkState: NetworkState.unstable,
+          phase: SyncPhase.retrying,
+          isBackgroundWorkerRegistered: true,
+          message: 'Retrying failed uploads',
+          uploadSpeedMbps: null,
+        ),
+      );
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> startBackgroundSync() async {
-    await _backgroundWorkerService.registerUploadWorker();
-    await _backgroundWorkerService.triggerUploadProcessing();
-    _statusController.add(
-      const SyncStatus(
-        networkState: NetworkState.stable,
-        phase: SyncPhase.idle,
-        isBackgroundWorkerRegistered: true,
-        message: 'Background sync is ready',
-        uploadSpeedMbps: null,
-      ),
-    );
-    return const Right(unit);
+    try {
+      await _backgroundWorkerService.registerUploadWorker();
+      await _backgroundWorkerService.triggerUploadProcessing();
+      _statusController.add(
+        const SyncStatus(
+          networkState: NetworkState.stable,
+          phase: SyncPhase.idle,
+          isBackgroundWorkerRegistered: true,
+          message: 'Background sync is ready',
+          uploadSpeedMbps: null,
+        ),
+      );
+      return const Right(unit);
+    } catch (e) {
+      _statusController.add(
+        const SyncStatus(
+          networkState: NetworkState.unstable,
+          phase: SyncPhase.waiting,
+          isBackgroundWorkerRegistered: false,
+          message: 'Background sync setup failed',
+          uploadSpeedMbps: null,
+        ),
+      );
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override

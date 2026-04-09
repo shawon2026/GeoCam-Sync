@@ -19,40 +19,68 @@ class UploadRepositoryImpl implements UploadRepository {
     String batchId,
     List<CameraCapture> captures,
   ) async {
-    return Right(await _localDataSource.addFilesToQueue(batchId, captures));
+    try {
+      return Right(await _localDataSource.addFilesToQueue(batchId, captures));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, UploadBatch>> createUploadBatch() async {
-    return Right(await _localDataSource.createBatch());
+    try {
+      return Right(await _localDataSource.createBatch());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> deleteSyncedFileLocally(String itemId) async {
-    await _localDataSource.deleteSyncedFileLocally(itemId);
-    return const Right(unit);
+    try {
+      await _localDataSource.deleteSyncedFileLocally(itemId);
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, List<UploadItem>>> getPendingUploads() async {
-    return Right(await _localDataSource.getPendingUploads());
+    try {
+      return Right(await _localDataSource.getPendingUploads());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, UploadProgress>> getUploadSummary() async {
-    return Right(await _localDataSource.getUploadSummary());
+    try {
+      return Right(await _localDataSource.getUploadSummary());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> pauseAllUploads() async {
-    await _localDataSource.pauseAllUploads();
-    return const Right(unit);
+    try {
+      await _localDataSource.pauseAllUploads();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override
   Future<Either<Failure, Unit>> resumeAllUploads() async {
-    await _localDataSource.resumeAllUploads();
-    return const Right(unit);
+    try {
+      await _localDataSource.resumeAllUploads();
+      return const Right(unit);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override

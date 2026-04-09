@@ -34,20 +34,40 @@ class UploadManagerCubit extends Cubit<UploadManagerState> {
 
   Future<void> initialize() async {
     emit(state.copyWith(isLoading: true, message: null));
-    _itemsSubscription ??= _watchPendingUploads().listen((items) async {
+    try {
+      _itemsSubscription ??= _watchPendingUploads().listen(
+        (items) async {
+          final summaryResult = await _getUploadSummary(NoParams());
+          summaryResult.fold(
+            (_) => emit(state.copyWith(items: items, isLoading: false)),
+            (summary) => emit(
+              state.copyWith(items: items, summary: summary, isLoading: false),
+            ),
+          );
+        },
+        onError: (error, _) {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              message: 'Failed to load upload queue',
+            ),
+          );
+        },
+      );
+
       final summaryResult = await _getUploadSummary(NoParams());
       summaryResult.fold(
-        (_) => emit(state.copyWith(items: items, isLoading: false)),
-        (summary) => emit(
-          state.copyWith(items: items, summary: summary, isLoading: false),
+        (_) => emit(state.copyWith(isLoading: false)),
+        (summary) => emit(state.copyWith(isLoading: false, summary: summary)),
+      );
+    } catch (_) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          message: 'Failed to initialize upload manager',
         ),
       );
-    });
-    final summaryResult = await _getUploadSummary(NoParams());
-    summaryResult.fold(
-      (_) => emit(state.copyWith(isLoading: false)),
-      (summary) => emit(state.copyWith(isLoading: false, summary: summary)),
-    );
+    }
   }
 
   Future<void> pauseAll() async {

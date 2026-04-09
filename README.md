@@ -1,149 +1,124 @@
-# GeoCam Sync 🌍📸
+# GeoCam Sync
 
-A Flutter-based technical assessment project combining a **Geo-Fenced Attendance System** and an **Advanced Camera & Sync Engine**.
+GeoCam Sync is a Flutter technical assessment app that combines two flows in one project: a geo-fenced attendance module and a camera-driven upload manager. The app focuses on offline-first behavior, local persistence, permission handling, and a simple bilingual UI.
 
----
+## 1. Project Title and Description
 
-## 🚧 Status
-🚀 Project setup phase — implementation in progress
+- Project title: `GeoCam Sync`
+- Description: A feature-first Flutter app for geo-fenced attendance marking and queued photo upload management with local storage, network-aware sync behavior, and Bengali/English localization support.
 
----
+## 2. Project Structure / Approach
 
-## 🎯 Objective
-
-This project aims to demonstrate:
-
-- Geo-fenced attendance validation (within 50m)
-- Custom camera integration
-- Offline-first upload system with retry
-- Clean Architecture + Repository Pattern
-- BLoC/Cubit state management
-
----
-
-## 🧩 Features
-
-### Attendance
-- [x] Set office location from current GPS
-- [x] Live distance tracking with range color states
-- [x] Attendance validation (≤ 50m)
-- [x] Late attendance handling (after 10:30 AM)
-- [x] Attendance history from local database
-
-### Camera & Sync
-- [ ] Custom camera UI
-- [ ] Batch capture
-- [ ] Upload queue
-- [ ] Retry on network recovery
-
----
-
-## 🧱 Architecture
-
-This project follows a minimal **Clean Architecture** with feature-first structure.
+This project is organized with a feature-first layered architecture where each active module keeps its `presentation`, `domain`, and `data` responsibilities separate, while `core/` centralizes shared infrastructure such as dependency injection, routing, localization, connectivity handling, and reusable UI building blocks. State orchestration is handled with Cubit, with `AttendanceCubit` driving the geo-fenced attendance flow, `UploadManagerCubit` managing queued upload state, `SyncEngineCubit` coordinating network-aware sync behavior, and `CameraPreviewCubit` controlling the capture, zoom, focus, flash, and gallery-preview lifecycle.
 
 ### Layer Breakdown
 
-- `core/` → shared app-level utilities (network, errors, DI, routes, theme, common helpers)
-- `features/<module>/presentation/` → UI + BLoC state
-- `features/<module>/domain/` → entities, repository contracts, use cases
-- `features/<module>/data/` → datasource, model, repository implementation
+- `lib/core/` → shared DI, services, connectivity, localization, widgets, routes, and helpers
+- `lib/features/<module>/presentation/` → screens, widgets, and Cubit state handling
+- `lib/features/<module>/domain/` → entities, repository contracts, and use cases
+- `lib/features/<module>/data/` → datasource and repository implementations
+- `lib/db/` → Drift database, converters, and table definitions
 
-### Current Feature Module
-
-The active modules are:
+### Active Feature Areas
 
 - `lib/features/home/presentation/...`
-- `lib/features/home/domain/...`
-- `lib/features/home/data/...`
 - `lib/features/attendance/presentation/...`
 - `lib/features/attendance/domain/...`
 - `lib/features/attendance/data/...`
-- `lib/db/...` for drift tables and database
+- `lib/features/upload_manager/presentation/...`
+- `lib/features/upload_manager/domain/...`
+- `lib/features/upload_manager/data/...`
+- `lib/db/...`
 
-### Data Flow (Request → UI)
+## Core Features
 
-1. `UI/BLoC` triggers `UseCase`
-2. `UseCase` calls `Domain Repository` interface
-3. `RepositoryImpl` coordinates remote/local datasource
-4. `RemoteDataSource` calls `ApiClient.request(...)`
-5. Response JSON is mapped in `data/models`
-6. Repository returns `Entity` / `Failure` to domain/presentation
+### Attendance
 
-### Model Placement Guideline
+- Set office location from current GPS
+- Live distance tracking with range color states
+- Attendance validation within allowed radius
+- Late attendance handling after configured time
+- Daily attendance history from local database
 
-Inside `features/<module>/data/models/`, keep models separated by concern:
+### Upload Manager
 
-- `request/` → API request DTOs (`toJson`)
-- `response/` → API response DTOs (`fromJson`)
-- `local/` → local cache/db DTOs
+- Camera preview and capture flow
+- Local batch creation and queueing
+- Network-aware sync state handling
+- Retry/pause/resume style upload queue behavior
+- Thumbnail generation for captured media
 
-This keeps API contract and local storage contract clean and scalable.
+## Package Usage
 
-## ✅ Package Usage (Keypoints)
+- `flutter_bloc`, `equatable`: feature state and immutable state comparison
+- `dartz`: `Either<Failure, T>`-based repository and use-case returns
+- `get_it`: dependency graph in `lib/core/di/service_locator.dart`
+- `location`: GPS read, permission checks, and live distance stream
+- `permission_handler`: camera permission flow
+- `app_settings`: open system settings from the app
+- `connectivity_plus`: connectivity stream and upload network monitoring
+- `drift`, `drift_flutter`, `sqlite3_flutter_libs`: local SQL persistence
+- `shared_preferences`: saved language selection
+- `camera`, `path`, `path_provider`, `image`: camera capture, pathing, file storage, and thumbnail generation
+- `flutter_screenutil`, `google_fonts`: responsive sizing and typography
+- `intl`: date/time formatting and generated localization support
+- `workmanager`: background upload trigger
 
-- `flutter_bloc`, `equatable`: feature state + immutable state comparison (`attendance_cubit`, `upload_manager`, `sync_engine`, `camera_preview`).
-- `dartz`: repository/use-case return type as `Either<Failure, T>` (domain and data layers).
-- `get_it`: DI and object graph setup in `lib/core/di/service_locator.dart`.
-- `location`: GPS read, permission/service checks, and live distance stream in `lib/features/attendance/data/datasources/location_datasource.dart`.
-- `permission_handler`: camera permission gate in upload manager screens and permission service.
-- `app_settings`: open app/system settings flows (`core/services/app_settings_service.dart`).
-- `connectivity_plus`: connectivity stream + network probing (`core/network/connectivity_service.dart`, `global_network_listener.dart`).
-- `drift`, `drift_flutter`, `sqlite3_flutter_libs`: local SQL persistence for attendance + upload queue (`lib/db/...`).
-- `shared_preferences`: persisted language preference in `lib/core/localization/locale_manager.dart`.
-- `camera`, `path`, `path_provider`, `image`: camera capture, file pathing, temp storage, thumbnail generation in upload manager.
-- `flutter_screenutil`, `google_fonts`: responsive sizing and typography in global UI widgets.
-- `intl`: date/time formatting and localization helpers (`core/utils/date_time_helper.dart`, `l10n` generated classes).
-- `workmanager`: background upload trigger (`core/services/background_worker_service.dart`).
+## Docs Map
 
-### Task 1 Docs
-- Package decision: `docs/task1/package-decision.md`
-- State matrix: `docs/task1/attendance-state-matrix.md`
-- Folder rationale: `docs/task1/folder-structure-rationale.md`
-- Full package usage map: `docs/setup/package-usage-map.md`
+- Full project walkthrough: [docs/project/project-walkthrough.md](docs/project/project-walkthrough.md)
+- Flow and coverage reference: [docs/project/flow-and-coverage-reference.md](docs/project/flow-and-coverage-reference.md)
+- Package decision: [docs/task1/package-decision.md](docs/task1/package-decision.md)
+- Attendance state matrix: [docs/task1/attendance-state-matrix.md](docs/task1/attendance-state-matrix.md)
+- Folder structure rationale: [docs/task1/folder-structure-rationale.md](docs/task1/folder-structure-rationale.md)
+- Package usage map: [docs/setup/package-usage-map.md](docs/setup/package-usage-map.md)
+- Generative AI usage note: [docs/agent-journey/generative-ai-usage.md](docs/agent-journey/generative-ai-usage.md)
 
----
+## 3. Generative AI Usage
 
-## 📦 Final Build Drop
+Generative AI was used as an implementation support tool for refactoring, feature shaping, architecture cleanup, and documentation drafting. It was mainly used to speed up repetitive engineering work, review module boundaries, prepare cleanup passes, and refine README/documentation structure rather than to replace manual validation.
 
-Final release build artifacts are available in this folder:
+Example prompt directions used in this project:
 
-- APK path: `release/artifacts/app-release.apk`
-- Download APK: [Download Latest Release APK](release/artifacts/app-release.apk)
-- Direct download (GitHub raw link format): `https://github.com/<owner>/<repo>/raw/<branch>/release/artifacts/app-release.apk`
+- “Review this Flutter feature module and identify unused data/domain/presentation scaffolding that can be safely removed.”
+- “Refactor shared app bar behavior so language switcher becomes the default action when no custom action is passed.”
+- “Scan the app for user-facing hardcoded strings that are missing localization and list only the necessary ones.”
+- “Convert presentation-layer sizing to `flutter_screenutil` using `.h`, `.w`, `.r`, and `.sp` where appropriate.”
+- “Group current repository changes into logical conventional commits with scope-based descriptions.”
 
----
+## 4. How to Run
 
-## ⚡ Setup
+### Clone and open the project
+
+```bash
+git clone <your-repo-url>
+cd GeoCam-Sync
+```
+
+### Install dependencies and generate files
 
 ```bash
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
+```
+
+### Run the app
+
+```bash
 flutter run
 ```
 
-### Localization Notes
+### Notes
 
-- ARB files: `lib/l10n/intl_en.arb`, `lib/l10n/intl_bn.arb`
-- Generated files come from `flutter gen-l10n`
-- `pubspec.yaml` uses `flutter: generate: true`
+- Main localization files: `lib/l10n/intl_en.arb` and `lib/l10n/intl_bn.arb`
+- Generated localization is enabled through `flutter: generate: true` in `pubspec.yaml`
+- The app currently targets portrait mode only
 
-## App Icon (Launcher)
+
+## App Icon
 
 This project uses `flutter_launcher_icons` to generate Android and iOS launcher icons.
-
-Quick steps used:
-
-1. Place icon asset at `assets/images/logo.png`
-2. Configure in `pubspec.yaml`:
-   - `flutter_launcher_icons` in `dev_dependencies`
-   - `flutter_launcher_icons` config with:
-     - `android: true`
-     - `ios: true`
-     - `image_path: assets/images/logo.png`
-     - `remove_alpha_ios: true`
-3. Run:
 
 ```bash
 flutter pub get

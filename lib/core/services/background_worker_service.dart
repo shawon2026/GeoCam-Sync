@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/widgets.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '/core/di/service_locator.dart';
@@ -11,6 +14,8 @@ const String uploadSyncUniqueName =
 @pragma('vm:entry-point')
 void uploadWorkerDispatcher() {
   Workmanager().executeTask((task, inputData) async {
+    WidgetsFlutterBinding.ensureInitialized();
+    DartPluginRegistrant.ensureInitialized();
     if (!sl.isRegistered<ProcessUploadQueue>()) {
       await initDependencies();
     }
