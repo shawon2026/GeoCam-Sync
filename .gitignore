@@ -84,6 +84,3 @@ coverage/
 *.rej
 /lib/features/splash/data/.gitkeep
 /lib/features/splash/domain/.gitkeep
-
-# Local documentation workspace
-/docs/
