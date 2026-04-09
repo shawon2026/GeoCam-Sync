@@ -32,15 +32,21 @@ class AuthenticationFailure extends Failure {
 
 /// Method not allowed failures for 405 errors
 class MethodNotAllowedFailure extends Failure {
-  const MethodNotAllowedFailure({required super.message, super.statusCode = 405});
+  const MethodNotAllowedFailure({
+    required super.message,
+    super.statusCode = 405,
+  });
 }
 
 /// Validation failures for input validation errors
 class ValidationFailure extends Failure {
   final Map<String, dynamic>? errors;
 
-  const ValidationFailure(
-      {required super.message, super.statusCode, this.errors});
+  const ValidationFailure({
+    required super.message,
+    super.statusCode,
+    this.errors,
+  });
 
   @override
   List<Object?> get props => [message, statusCode, errors];
@@ -76,7 +82,8 @@ class ValidationFailure extends Failure {
 
 /// Too many requests failures for 429 errors
 class TooManyRequestsFailure extends Failure {
-  const TooManyRequestsFailure({required super.message, super.statusCode = 429});
+  const TooManyRequestsFailure({
+    required super.message,
+    super.statusCode = 429,
+  });
 }
-
-

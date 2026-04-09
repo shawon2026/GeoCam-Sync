@@ -16,4 +16,3 @@ class AppVersion {
     'App version Code is :: ${versionCode.toString()}'.log();
   }
 }
- 

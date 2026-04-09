@@ -44,4 +44,3 @@ class ThemeManager {
     await WidgetsBinding.instance.performReassemble();
   }
 }
-

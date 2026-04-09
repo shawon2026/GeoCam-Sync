@@ -100,4 +100,3 @@ class PrefHelper {
     return await setInt(AppConstants.language.key, language);
   }
 }
-

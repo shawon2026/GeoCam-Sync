@@ -15,4 +15,3 @@ class GetHome implements UseCase<List<Home>, NoParams> {
     return await _repository.getHome();
   }
 }
-

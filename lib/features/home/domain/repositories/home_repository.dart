@@ -8,4 +8,3 @@ abstract class HomeRepository {
   /// Get paginated list of Home
   Future<Either<Failure, List<Home>>> getHome();
 }
-
