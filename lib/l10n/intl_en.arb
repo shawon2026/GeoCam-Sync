@@ -41,6 +41,7 @@
   "uploadManagerClearAllSynced": "Clear All Synced",
   "uploadManagerClearSyncedSingle": "Clear Synced Item",
   "uploadManagerClearSyncedConfirm": "This will remove selected synced data from local storage.",
+  "uploadManagerSyncedRetentionNote": "Only the most recent 20 synced items are kept locally.",
   "pauseAllUploads": "Pause All",
   "resumeAllUploads": "Resume All",
   "startNewUploadBatch": "Start New Upload Batch",

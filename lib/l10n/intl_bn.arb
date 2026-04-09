@@ -41,6 +41,7 @@
   "uploadManagerClearAllSynced": "সব সিঙ্কড মুছুন",
   "uploadManagerClearSyncedSingle": "সিঙ্কড আইটেম মুছুন",
   "uploadManagerClearSyncedConfirm": "এতে নির্বাচিত সিঙ্কড ডাটা লোকাল স্টোরেজ থেকে মুছে যাবে।",
+  "uploadManagerSyncedRetentionNote": "লোকালি শুধু সর্বশেষ ২০টি সিঙ্কড আইটেম রাখা হয়।",
   "pauseAllUploads": "সব থামান",
   "resumeAllUploads": "সব চালু করুন",
   "startNewUploadBatch": "নতুন আপলোড ব্যাচ শুরু করুন",

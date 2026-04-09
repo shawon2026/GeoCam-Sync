@@ -272,6 +272,8 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
           ? domain.UploadBatchStatus.completed.name
           : domain.UploadBatchStatus.uploading.name,
     );
+
+    await _pruneOldSyncedHistory();
   }
 
   @override
@@ -381,6 +383,45 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
   UploadItemRow? _findById(List<UploadItemRow> items, String id) {
     final matches = items.where((entry) => entry.id == id);
     return matches.isEmpty ? null : matches.first;
+  }
+
+  Future<void> _pruneOldSyncedHistory() async {
+    final rows = await _database.getUploadItems();
+
+    final batchIdsWithPending = rows
+        .where((row) => row.status != domain.UploadItemStatus.synced)
+        .map((row) => row.batchId)
+        .toSet();
+
+    final syncedRows =
+        rows
+            .where(
+              (row) =>
+                  row.status == domain.UploadItemStatus.synced &&
+                  !batchIdsWithPending.contains(row.batchId),
+            )
+            .toList(growable: false)
+          ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
+    if (syncedRows.length <= UploadConstants.maxSyncedHistoryItems) {
+      return;
+    }
+
+    final removable = syncedRows.skip(UploadConstants.maxSyncedHistoryItems);
+    for (final row in removable) {
+      await _deleteFileIfExists(row.localFilePath);
+      if (row.thumbnailPath != null) {
+        await _deleteFileIfExists(row.thumbnailPath!);
+      }
+      await _database.deleteUploadItem(row.id);
+    }
+  }
+
+  Future<void> _deleteFileIfExists(String pathValue) async {
+    final file = File(pathValue);
+    if (await file.exists()) {
+      await file.delete();
+    }
   }
 
   int _priority(domain.UploadItemStatus status) {

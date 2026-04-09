@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -122,8 +124,8 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
                     isPaused: uploadState.isPaused,
                     uploadSpeedMbps: syncState.uploadSpeedMbps,
                     onPauseResume: uploadState.isPaused
-                        ? _uploadManagerCubit.resumeAll
-                        : _uploadManagerCubit.pauseAll,
+                        ? () => unawaited(_resumeAndProcessQueue())
+                        : () => unawaited(_uploadManagerCubit.pauseAll()),
                     onClearSyncedItems: _uploadManagerCubit.clearSyncedItems,
                     onClearAllSyncedItems: _uploadManagerCubit.clearAllSyncedItems,
                   );
@@ -217,5 +219,10 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
     _openingCamera = true;
     await Navigation.push(context, appRoutes: AppRoutes.cameraPreview);
     _openingCamera = false;
+  }
+
+  Future<void> _resumeAndProcessQueue() async {
+    await _uploadManagerCubit.resumeAll();
+    await _syncEngineCubit.processQueue();
   }
 }

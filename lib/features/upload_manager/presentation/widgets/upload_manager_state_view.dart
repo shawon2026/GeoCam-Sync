@@ -305,37 +305,53 @@ class _SyncedActionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OutlinedButton(
-          onPressed: isBusy ? null : onToggleSelectionMode,
-          child: Text(
-            selectionMode
-                ? context.loc.cancel
-                : context.loc.uploadManagerSelect,
+        Text(
+          context.loc.uploadManagerSyncedRetentionNote,
+          style: const TextStyle(
+            color: Color(0xFF64748B),
+            fontSize: 11.5,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        if (selectionMode)
-          OutlinedButton(
-            onPressed: isBusy ? null : onToggleSelectAll,
-            child: Text(
-              selectedCount == totalCount
-                  ? context.loc.uploadManagerUnselectAll
-                  : context.loc.uploadManagerSelectAll,
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton(
+              onPressed: isBusy ? null : onToggleSelectionMode,
+              child: Text(
+                selectionMode
+                    ? context.loc.cancel
+                    : context.loc.uploadManagerSelect,
+              ),
             ),
-          ),
-        if (selectionMode)
-          FilledButton.tonal(
-            onPressed: isBusy || selectedCount == 0 ? null : onClearSelected,
-            child: Text(
-              '${context.loc.uploadManagerClearSelected} ($selectedCount)',
+            if (selectionMode)
+              OutlinedButton(
+                onPressed: isBusy ? null : onToggleSelectAll,
+                child: Text(
+                  selectedCount == totalCount
+                      ? context.loc.uploadManagerUnselectAll
+                      : context.loc.uploadManagerSelectAll,
+                ),
+              ),
+            if (selectionMode)
+              FilledButton.tonal(
+                onPressed: isBusy || selectedCount == 0
+                    ? null
+                    : onClearSelected,
+                child: Text(
+                  '${context.loc.uploadManagerClearSelected} ($selectedCount)',
+                ),
+              ),
+            FilledButton.tonal(
+              onPressed: isBusy ? null : onClearAll,
+              child: Text(context.loc.uploadManagerClearAllSynced),
             ),
-          ),
-        FilledButton.tonal(
-          onPressed: isBusy ? null : onClearAll,
-          child: Text(context.loc.uploadManagerClearAllSynced),
+          ],
         ),
       ],
     );
