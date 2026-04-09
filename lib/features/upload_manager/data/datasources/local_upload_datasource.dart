@@ -32,6 +32,7 @@ abstract class LocalUploadDataSource {
   Future<void> resumeAllUploads();
 
   Future<void> deleteSyncedFileLocally(String itemId);
+  Future<void> cleanupSyncedSourceFile(String itemId);
 
   Future<void> markFirstPendingUploading();
 
@@ -122,6 +123,29 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
 
   @override
   Future<void> deleteSyncedFileLocally(String itemId) async {
+    final items = await _database.getUploadItems();
+    final item = _findById(items, itemId);
+    if (item == null) {
+      return;
+    }
+    if (item.status != domain.UploadItemStatus.synced) {
+      return;
+    }
+    final file = File(item.localFilePath);
+    if (await file.exists()) {
+      await file.delete();
+    }
+    if (item.thumbnailPath != null) {
+      final thumbnail = File(item.thumbnailPath!);
+      if (await thumbnail.exists()) {
+        await thumbnail.delete();
+      }
+    }
+    await _database.deleteUploadItem(itemId);
+  }
+
+  @override
+  Future<void> cleanupSyncedSourceFile(String itemId) async {
     final items = await _database.getUploadItems();
     final item = _findById(items, itemId);
     if (item == null) {

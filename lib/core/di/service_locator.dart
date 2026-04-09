@@ -222,6 +222,7 @@ Future<void> initDependencies() async {
       watchPendingUploads: sl(),
       pauseAllUploads: sl(),
       resumeAllUploads: sl(),
+      deleteSyncedFileLocally: sl(),
     ),
   );
   sl.registerFactory(

@@ -18,27 +18,10 @@ class DummyUploadException implements Exception {
 }
 
 class RemoteUploadDataSourceImpl implements RemoteUploadDataSource {
-  final Map<String, int> _attemptCounter = <String, int>{};
-
   @override
   Future<void> upload(UploadItem item) async {
-    final attempt = (_attemptCounter[item.id] ?? 0) + 1;
-    _attemptCounter[item.id] = attempt;
-
+    // Dummy upload simulation: no real URL call, just network delay.
     final delayMs = 2000 + (item.id.hashCode.abs() % 1000);
     await Future<void>.delayed(Duration(milliseconds: delayMs));
-
-    final bucket = item.id.hashCode.abs() % 4;
-    if (bucket == 0 && attempt == 1) {
-      throw const DummyUploadException(
-        message: 'Simulated unstable network on first attempt',
-        isNetworkIssue: true,
-      );
-    }
-    if (bucket == 1 && attempt <= 2) {
-      throw const DummyUploadException(
-        message: 'Simulated transient server error',
-      );
-    }
   }
 }

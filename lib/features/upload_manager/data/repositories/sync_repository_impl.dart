@@ -26,13 +26,15 @@ class SyncRepositoryImpl implements SyncRepository {
        _backgroundWorkerService = backgroundWorkerService {
     _networkSubscription = _networkMonitorDataSource.watchNetworkState().listen(
       (state) async {
-        if (state == NetworkState.offline) {
+        if (!state.canUpload) {
           _statusController.add(
-            const SyncStatus(
-              networkState: NetworkState.offline,
+            SyncStatus(
+              networkState: state,
               phase: SyncPhase.waiting,
               isBackgroundWorkerRegistered: true,
-              message: 'Waiting for internet connection',
+              message: state == NetworkState.offline
+                  ? 'Waiting for internet connection'
+                  : 'Waiting for stable bandwidth',
               uploadSpeedMbps: null,
             ),
           );
@@ -85,6 +87,23 @@ class SyncRepositoryImpl implements SyncRepository {
 
       var processedItems = 0;
       while (processedItems < UploadConstants.maxConcurrentUploads) {
+        final latestState = await _networkMonitorDataSource.getCurrentState();
+        if (!latestState.canUpload) {
+          await _localUploadDataSource.markActiveItemsWaiting();
+          _statusController.add(
+            SyncStatus(
+              networkState: latestState,
+              phase: SyncPhase.waiting,
+              isBackgroundWorkerRegistered: true,
+              message: latestState == NetworkState.offline
+                  ? 'Waiting for internet connection'
+                  : 'Waiting for stable bandwidth',
+              uploadSpeedMbps: null,
+            ),
+          );
+          break;
+        }
+
         await _localUploadDataSource.markFirstPendingUploading();
         final uploads = await _localUploadDataSource.getPendingUploads();
         final uploadingItems = uploads.where(
@@ -97,18 +116,18 @@ class SyncRepositoryImpl implements SyncRepository {
 
         _statusController.add(
           SyncStatus(
-            networkState: networkState,
+            networkState: latestState,
             phase: SyncPhase.uploading,
             isBackgroundWorkerRegistered: true,
             message: 'Uploading ${item.fileName}',
-            uploadSpeedMbps: _speedFor(networkState),
+            uploadSpeedMbps: _speedFor(latestState),
           ),
         );
 
         try {
           await _remoteUploadDataSource.upload(item);
           await _localUploadDataSource.markFirstUploadingSynced();
-          await _localUploadDataSource.deleteSyncedFileLocally(item.id);
+          await _localUploadDataSource.cleanupSyncedSourceFile(item.id);
           processedItems++;
         } on DummyUploadException catch (error) {
           if (error.isNetworkIssue) {
@@ -161,14 +180,28 @@ class SyncRepositoryImpl implements SyncRepository {
       final hasWork = remainingItems.any(
         (item) => item.status != UploadItemStatus.synced,
       );
+      final hasPausedOnly =
+          hasWork &&
+          remainingItems
+              .where((item) => item.status != UploadItemStatus.synced)
+              .every((item) => item.status == UploadItemStatus.paused);
+      final finalState = await _networkMonitorDataSource.getCurrentState();
       _statusController.add(
         SyncStatus(
-          networkState: networkState,
-          phase: hasWork ? SyncPhase.idle : SyncPhase.completed,
+          networkState: finalState,
+          phase: !hasWork
+              ? SyncPhase.completed
+              : hasPausedOnly
+              ? SyncPhase.paused
+              : (finalState.canUpload ? SyncPhase.idle : SyncPhase.waiting),
           isBackgroundWorkerRegistered: true,
-          message: hasWork
-              ? 'Queue is ready for the next upload'
-              : 'All uploads synced',
+          message: !hasWork
+              ? 'All uploads synced'
+              : hasPausedOnly
+              ? 'Uploads paused by user'
+              : (finalState.canUpload
+                    ? 'Queue is ready for the next upload'
+                    : 'Waiting for stable connection'),
           uploadSpeedMbps: null,
         ),
       );
