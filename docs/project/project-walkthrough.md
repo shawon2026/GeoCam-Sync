@@ -169,7 +169,6 @@ Examples:
 - no authentication or user account flow
 - no admin flow for office configuration management
 - no remote reporting dashboard
-- screenshots and release file links are not filled in yet
 
 ## How Non-Technical Reviewers Can Understand The App
 
@@ -190,7 +189,12 @@ That means the app is mainly about:
 For deeper reading, use these in order:
 
 1. `README.md`
-2. `docs/project/project-walkthrough.md`
-3. `docs/project/flow-and-coverage-reference.md`
-4. `docs/task1/attendance-state-matrix.md`
-5. `docs/setup/package-usage-map.md`
+2. `docs/project/end-to-end-user-journey.md`
+3. `docs/project/project-walkthrough.md`
+4. `docs/project/screen-navigation-map.md`
+5. `docs/task1/task1-testing-guide.md`
+6. `docs/task2/task2-testing-guide.md`
+7. `docs/project/flow-and-coverage-reference.md`
+8. `docs/task1/attendance-state-matrix.md`
+9. `docs/task2/upload-manager-flow-reference.md`
+10. `docs/setup/package-usage-map.md`
