@@ -1,7 +1,7 @@
 enum NetworkState { stable, unstable, offline }
 
 extension NetworkStateX on NetworkState {
-  bool get canUpload => this != NetworkState.offline;
+  bool get canUpload => this == NetworkState.stable;
 
   String get label {
     switch (this) {
