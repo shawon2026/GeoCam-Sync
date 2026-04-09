@@ -11,8 +11,8 @@ class DateTimeHelper {
       dateTime.year,
       dateTime.month,
       dateTime.day,
-      AttendanceConstants.attendanceStartHour,
-      AttendanceConstants.attendanceStartMinute,
+      AttendanceConstants.attendanceStartHour.value.toInt(),
+      AttendanceConstants.attendanceStartMinute.value.toInt(),
     );
   }
 
@@ -21,8 +21,8 @@ class DateTimeHelper {
       dateTime.year,
       dateTime.month,
       dateTime.day,
-      AttendanceConstants.lateThresholdHour,
-      AttendanceConstants.lateThresholdMinute,
+      AttendanceConstants.lateThresholdHour.value.toInt(),
+      AttendanceConstants.lateThresholdMinute.value.toInt(),
     );
   }
 
@@ -36,5 +36,15 @@ class DateTimeHelper {
 
   static String toDateTimeLabel(DateTime dateTime) {
     return DateFormat('dd MMM yyyy, hh:mm a').format(dateTime);
+  }
+
+  static String toWindowTimeLabel({
+    required int hour,
+    required int minute,
+    DateTime? baseDate,
+  }) {
+    final date = baseDate ?? now();
+    final value = DateTime(date.year, date.month, date.day, hour, minute);
+    return DateFormat('hh:mm a').format(value);
   }
 }

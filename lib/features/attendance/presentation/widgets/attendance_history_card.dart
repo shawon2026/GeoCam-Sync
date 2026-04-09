@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import '/core/theme/app_colors.dart';
 import '/core/utils/date_time_helper.dart';
 import '/core/utils/extension.dart';
@@ -43,7 +44,7 @@ class AttendanceHistoryCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  GlobalText.raw(
                     isLate
                         ? context.loc.lateAttendanceMarked
                         : context.loc.attendanceMarked,
@@ -54,7 +55,7 @@ class AttendanceHistoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  GlobalText.raw(
                     DateTimeHelper.toDateTimeLabel(item.markedAt),
                     style: TextStyle(
                       color: AppColors.textSecondary.color,
@@ -105,7 +106,7 @@ class _HistoryChip extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: AppColors.textSecondary.color),
           const SizedBox(width: 6),
-          Text(
+          GlobalText.raw(
             label,
             style: TextStyle(
               color: AppColors.textPrimary.color,

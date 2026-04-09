@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/di/service_locator.dart';
+import '/core/constants/attendance_constants.dart';
 import '/core/presentation/view_util.dart';
 import '/core/presentation/widgets/global_appbar.dart';
 import '/core/routes/app_routes.dart';
@@ -82,7 +84,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           if (state.message != null) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message!)));
+            ).showSnackBar(SnackBar(content: GlobalText.raw(state.message!)));
           }
 
           if (state.status == AttendanceViewStatus.permissionBlocked) {
@@ -155,19 +157,20 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                     AttendanceActionCard(
                       title: _title(context, state),
                       subtitle: _subtitle(context, state),
+                      markedAtText: state.todayRecord == null
+                          ? null
+                          : '${context.loc.attendanceMarkedAt}: ${DateTimeHelper.toDateTimeLabel(state.todayRecord!.markedAt)}',
                       buttonLabel: _button(context, state),
                       enabled: _isActionEnabled(state),
                       isLoading: state.isSubmitting,
                       onMark: () => _onMarkTap(context, cubit, state),
-                      availabilityText:
-                          context.loc.attendanceAvailabilityWindow,
+                      availabilityText: _availabilityWindowText(context),
+                      isMarked: state.eligibility?.isAlreadyMarked ?? false,
+                      isMarkedLate: state.todayRecord?.status.name == 'late',
+                      isLateAction: (state.eligibility?.isLate ?? false) &&
+                          !(state.eligibility?.isAlreadyMarked ?? false),
                       showLockIcon: !_isActionEnabled(state),
                     ),
-                    const SizedBox(height: 12),
-                    if (state.todayRecord != null)
-                      Text(
-                        '${context.loc.attendanceMarkedAt}: ${DateTimeHelper.toDateTimeLabel(state.todayRecord!.markedAt)}',
-                      ),
                   ],
                 ),
               ),
@@ -213,15 +216,15 @@ class _AttendanceScreenState extends State<AttendanceScreen>
         return PopScope(
           canPop: false,
           child: AlertDialog(
-            title: Text(title),
-            content: Text(message),
+            title: GlobalText.raw(title),
+            content: GlobalText.raw(message),
             actions: [
               FilledButton(
                 onPressed: () async {
                   Navigator.of(dialogContext).pop();
                   await onAction();
                 },
-                child: Text(actionText),
+                child: GlobalText.raw(actionText),
               ),
             ],
           ),
@@ -248,8 +251,8 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     final alreadyMarked = state.eligibility?.isAlreadyMarked ?? false;
     final isLate = state.eligibility?.isLate ?? false;
 
-    if (alreadyMarked && !inRange) {
-      return context.loc.attendanceAlreadyMarked;
+    if (alreadyMarked) {
+      return '';
     }
     if (!alreadyMarked &&
         inRange &&
@@ -261,11 +264,8 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     }
     if (!inRange) {
       return isLate
-          ? context.loc.enterWithinRangeForLate
-          : context.loc.moveWithinRange;
-    }
-    if (alreadyMarked) {
-      return context.loc.attendanceAlreadyMarked;
+          ? context.loc.enterWithinRangeForLateDynamic(_rangeMetersLabel)
+          : context.loc.moveWithinRangeDynamic(_rangeMetersLabel);
     }
     return context.loc.attendanceReady;
   }
@@ -275,10 +275,10 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     if (eligibility == null) {
       return false;
     }
-    if (eligibility.canMarkNow) {
-      return true;
+    if (eligibility.isAlreadyMarked) {
+      return false;
     }
-    if (eligibility.isAlreadyMarked && eligibility.inRange) {
+    if (eligibility.canMarkNow) {
       return true;
     }
     return false;
@@ -294,9 +294,6 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       return;
     }
     if (eligibility.isAlreadyMarked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.loc.attendanceAlreadyMarked)),
-      );
       return;
     }
     cubit.markAttendance();
@@ -311,4 +308,22 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     }
     return context.loc.markAttendance;
   }
+
+  String _availabilityWindowText(BuildContext context) {
+    final startLabel = DateTimeHelper.toWindowTimeLabel(
+      hour: AttendanceConstants.attendanceStartHour.value.toInt(),
+      minute: AttendanceConstants.attendanceStartMinute.value.toInt(),
+    );
+    final endLabel = DateTimeHelper.toWindowTimeLabel(
+      hour: AttendanceConstants.lateThresholdHour.value.toInt(),
+      minute: AttendanceConstants.lateThresholdMinute.value.toInt(),
+    );
+    return context.loc.attendanceAvailabilityWindowDynamic(
+      startLabel,
+      endLabel,
+    );
+  }
+
+  String get _rangeMetersLabel =>
+      AttendanceConstants.inRangeThresholdMeters.value.toStringAsFixed(0);
 }

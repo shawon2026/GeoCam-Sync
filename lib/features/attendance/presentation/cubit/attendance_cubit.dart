@@ -5,6 +5,7 @@ import '/features/attendance/domain/usecases/check_attendance_eligibility.dart';
 import '/features/attendance/domain/usecases/ensure_location_permission.dart';
 import '/features/attendance/domain/usecases/ensure_location_service.dart';
 import '/features/attendance/domain/usecases/get_office_location.dart';
+import '/features/attendance/domain/usecases/get_distance_to_office.dart';
 import '/features/attendance/domain/usecases/get_today_attendance.dart';
 import '/features/attendance/domain/usecases/is_location_permission_granted.dart';
 import '/features/attendance/domain/usecases/is_location_service_enabled.dart';
@@ -26,6 +27,7 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     required IsPreciseLocationPermissionGranted
     isPreciseLocationPermissionGranted,
     required GetOfficeLocation getOfficeLocation,
+    required GetDistanceToOffice getDistanceToOffice,
     required SaveOfficeLocation saveOfficeLocation,
     required GetTodayAttendance getTodayAttendance,
     required MarkAttendance markAttendance,
@@ -40,6 +42,7 @@ class AttendanceCubit extends Cubit<AttendanceState> {
        _isLocationServiceEnabled = isLocationServiceEnabled,
        _isPreciseLocationPermissionGranted = isPreciseLocationPermissionGranted,
        _getOfficeLocation = getOfficeLocation,
+       _getDistanceToOffice = getDistanceToOffice,
        _saveOfficeLocation = saveOfficeLocation,
        _getTodayAttendance = getTodayAttendance,
        _markAttendance = markAttendance,
@@ -56,6 +59,7 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   final IsLocationServiceEnabled _isLocationServiceEnabled;
   final IsPreciseLocationPermissionGranted _isPreciseLocationPermissionGranted;
   final GetOfficeLocation _getOfficeLocation;
+  final GetDistanceToOffice _getDistanceToOffice;
   final SaveOfficeLocation _saveOfficeLocation;
   final GetTodayAttendance _getTodayAttendance;
   final MarkAttendance _markAttendance;
@@ -143,16 +147,36 @@ class AttendanceCubit extends Cubit<AttendanceState> {
         emit(state.copyWith(isSubmitting: false, message: failure.message));
       },
       (office) async {
+        await _distanceSubscription?.cancel();
         emit(
           state.copyWith(
             status: AttendanceViewStatus.ready,
             officeLocation: office,
-            isSubmitting: false,
+            isSubmitting: true,
             message: null,
           ),
         );
-        await _distanceSubscription?.cancel();
-        _listenDistance();
+
+        final hasDistanceUpdate = await _listenDistance(waitForFirstEmission: true);
+        if (!hasDistanceUpdate) {
+          final distanceResult = await _getDistanceToOffice(NoParams());
+          distanceResult.fold((_) => null, (distance) {
+            final eligibility = _checkAttendanceEligibility(
+              CheckAttendanceEligibilityParams(
+                distanceMeters: distance,
+                todayRecord: state.todayRecord,
+              ),
+            );
+            emit(
+              state.copyWith(
+                distanceMeters: distance,
+                eligibility: eligibility,
+              ),
+            );
+          });
+        }
+
+        emit(state.copyWith(isSubmitting: false));
       },
     );
   }
@@ -315,7 +339,8 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     );
   }
 
-  void _listenDistance() {
+  Future<bool> _listenDistance({bool waitForFirstEmission = false}) async {
+    final firstEmission = waitForFirstEmission ? Completer<bool>() : null;
     _distanceSubscription = _watchLiveDistance().listen((distance) {
       if (isClosed) {
         return;
@@ -327,7 +352,28 @@ class AttendanceCubit extends Cubit<AttendanceState> {
         ),
       );
       emit(state.copyWith(distanceMeters: distance, eligibility: eligibility));
+
+      if (firstEmission != null && !firstEmission.isCompleted) {
+        firstEmission.complete(true);
+      }
+    }, onError: (_) {
+      if (firstEmission != null && !firstEmission.isCompleted) {
+        firstEmission.complete(false);
+      }
     });
+
+    if (firstEmission == null) {
+      return true;
+    }
+
+    try {
+      return await firstEmission.future.timeout(
+        const Duration(seconds: 4),
+        onTimeout: () => false,
+      );
+    } on TimeoutException {
+      return false;
+    }
   }
 
   Future<void> _listenHistory({bool waitForFirstEmission = false}) async {

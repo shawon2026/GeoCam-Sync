@@ -84,13 +84,29 @@
   "markAttendance": "উপস্থিতি দিন",
   "markLateAttendance": "লেট উপস্থিতি দিন",
   "attendanceAlreadyMarked": "উপস্থিতি আগেই মার্ক করা হয়েছে।",
-  "enterWithinRangeForLate": "লেট উপস্থিতি দিতে ৫০মিটারের মধ্যে আসুন।",
-  "moveWithinRange": "উপস্থিতি সক্রিয় করতে ৫০মিটারের মধ্যে আসুন।",
+  "enterWithinRangeForLateDynamic": "লেট উপস্থিতি দিতে {rangeMeters} মিটারের মধ্যে আসুন।",
+  "@enterWithinRangeForLateDynamic": {
+    "placeholders": {
+      "rangeMeters": {}
+    }
+  },
+  "moveWithinRangeDynamic": "উপস্থিতি সক্রিয় করতে {rangeMeters} মিটারের মধ্যে আসুন।",
+  "@moveWithinRangeDynamic": {
+    "placeholders": {
+      "rangeMeters": {}
+    }
+  },
   "attendanceReady": "আপনি রেঞ্জের মধ্যে আছেন, উপস্থিতি দিতে প্রস্তুত।",
   "attendanceStepOfficeContext": "ধাপ ১: অফিস কনটেক্সট",
   "attendanceOfficeHint": "উপস্থিতি দিতে আপনার বর্তমান অফিস লোকেশন সঠিকভাবে নির্ধারিত আছে কিনা নিশ্চিত করুন।",
   "attendanceInRangeLabel": "রেঞ্জের মধ্যে",
   "attendanceOutOfRangeLabel": "রেঞ্জের বাইরে",
-  "attendanceAvailabilityWindow": "উপলব্ধ ০৯:০০ AM - ১০:৩০ AM",
+  "attendanceAvailabilityWindowDynamic": "উপলব্ধ {startTime} - {endTime}",
+  "@attendanceAvailabilityWindowDynamic": {
+    "placeholders": {
+      "startTime": {},
+      "endTime": {}
+    }
+  },
   "attendanceEarlyArrival": "আগে পৌঁছেছেন"
 }

@@ -70,7 +70,8 @@ class LocationDataSourceImpl implements LocationDataSource {
       return false;
     }
 
-    return accuracy <= AttendanceConstants.preciseLocationMaxAccuracyMeters;
+    return accuracy <=
+        AttendanceConstants.preciseLocationMaxAccuracyMeters.value;
   }
 
   @override

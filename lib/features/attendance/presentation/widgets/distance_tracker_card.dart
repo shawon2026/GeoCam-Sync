@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/constants/attendance_constants.dart';
 import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 import '/core/utils/location_color_helper.dart';
@@ -42,7 +43,7 @@ class DistanceTrackerCard extends StatelessWidget {
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                   ),
                 ),
-                Text(
+                GlobalText.raw(
                   distanceText,
                   style: const TextStyle(
                     color: Color(0xFF374151),
@@ -65,7 +66,7 @@ class DistanceTrackerCard extends StatelessWidget {
               children: [
                 Icon(Icons.circle, size: 8, color: color),
                 const SizedBox(width: 6),
-                Text(
+                GlobalText.raw(
                   statusText,
                   style: TextStyle(
                     color: color,
@@ -80,7 +81,7 @@ class DistanceTrackerCard extends StatelessWidget {
           GlobalText(
             str: inRange
                 ? context.loc.attendanceReady
-                : context.loc.moveWithinRange,
+                : context.loc.moveWithinRangeDynamic(_rangeMetersLabel),
             fontSize: 12,
             textAlign: TextAlign.center,
             color: const Color(0xFF94A3B8),
@@ -90,3 +91,6 @@ class DistanceTrackerCard extends StatelessWidget {
     );
   }
 }
+
+String get _rangeMetersLabel =>
+    AttendanceConstants.inRangeThresholdMeters.value.toStringAsFixed(0);

@@ -84,13 +84,29 @@
   "markAttendance": "Mark Attendance",
   "markLateAttendance": "Mark Late Attendance",
   "attendanceAlreadyMarked": "Attendance already marked.",
-  "enterWithinRangeForLate": "Enter within 50m to mark late attendance.",
-  "moveWithinRange": "Move within 50m to enable attendance.",
+  "enterWithinRangeForLateDynamic": "Enter within {rangeMeters}m to mark late attendance.",
+  "@enterWithinRangeForLateDynamic": {
+    "placeholders": {
+      "rangeMeters": {}
+    }
+  },
+  "moveWithinRangeDynamic": "Move within {rangeMeters}m to enable attendance.",
+  "@moveWithinRangeDynamic": {
+    "placeholders": {
+      "rangeMeters": {}
+    }
+  },
   "attendanceReady": "You are in range and ready to mark attendance.",
   "attendanceStepOfficeContext": "STEP 1: OFFICE CONTEXT",
   "attendanceOfficeHint": "To mark your attendance, ensure your current office location is correctly identified.",
   "attendanceInRangeLabel": "IN RANGE",
   "attendanceOutOfRangeLabel": "OUT OF RANGE",
-  "attendanceAvailabilityWindow": "AVAILABLE 09:00 AM - 10:30 AM",
+  "attendanceAvailabilityWindowDynamic": "AVAILABLE {startTime} - {endTime}",
+  "@attendanceAvailabilityWindowDynamic": {
+    "placeholders": {
+      "startTime": {},
+      "endTime": {}
+    }
+  },
   "attendanceEarlyArrival": "Early Arrival"
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 
 class PermissionRequiredDialog extends StatelessWidget {
@@ -14,12 +15,12 @@ class PermissionRequiredDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(context.loc.locationPermissionRequiredTitle),
-      content: Text(message),
+      title: GlobalText.raw(context.loc.locationPermissionRequiredTitle),
+      content: GlobalText.raw(message),
       actions: [
         TextButton(
           onPressed: onOpenSettings,
-          child: Text(context.loc.goToSettings),
+          child: GlobalText.raw(context.loc.goToSettings),
         ),
       ],
     );

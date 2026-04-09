@@ -20,6 +20,7 @@ import '/features/attendance/domain/usecases/check_attendance_eligibility.dart';
 import '/features/attendance/domain/usecases/ensure_location_permission.dart';
 import '/features/attendance/domain/usecases/ensure_location_service.dart';
 import '/features/attendance/domain/usecases/get_office_location.dart';
+import '/features/attendance/domain/usecases/get_distance_to_office.dart';
 import '/features/attendance/domain/usecases/get_today_attendance.dart';
 import '/features/attendance/domain/usecases/is_location_permission_granted.dart';
 import '/features/attendance/domain/usecases/is_location_service_enabled.dart';
@@ -135,6 +136,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => IsLocationServiceEnabled(sl()));
   sl.registerLazySingleton(() => IsPreciseLocationPermissionGranted(sl()));
   sl.registerLazySingleton(() => GetOfficeLocation(sl()));
+  sl.registerLazySingleton(() => GetDistanceToOffice(sl()));
   sl.registerLazySingleton(() => SaveOfficeLocation(sl()));
   sl.registerLazySingleton(() => GetTodayAttendance(sl()));
   sl.registerLazySingleton(() => MarkAttendance(sl()));
@@ -152,6 +154,7 @@ Future<void> initDependencies() async {
       isLocationServiceEnabled: sl(),
       isPreciseLocationPermissionGranted: sl(),
       getOfficeLocation: sl(),
+      getDistanceToOffice: sl(),
       saveOfficeLocation: sl(),
       getTodayAttendance: sl(),
       markAttendance: sl(),

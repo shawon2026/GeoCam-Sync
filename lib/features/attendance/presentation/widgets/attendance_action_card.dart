@@ -10,6 +10,10 @@ class AttendanceActionCard extends StatelessWidget {
     required this.isLoading,
     required this.onMark,
     required this.availabilityText,
+    this.markedAtText,
+    this.isLateAction = false,
+    this.isMarked = false,
+    this.isMarkedLate = false,
     this.showLockIcon = false,
     super.key,
   });
@@ -21,6 +25,10 @@ class AttendanceActionCard extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onMark;
   final String availabilityText;
+  final String? markedAtText;
+  final bool isLateAction;
+  final bool isMarked;
+  final bool isMarkedLate;
   final bool showLockIcon;
 
   @override
@@ -37,7 +45,7 @@ class AttendanceActionCard extends StatelessWidget {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (showLockIcon) ...[
             const Center(
@@ -45,40 +53,60 @@ class AttendanceActionCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
           ],
-          GlobalText(str: title, fontSize: 16, fontWeight: FontWeight.w700),
-          const SizedBox(height: 6),
           GlobalText(
-            str: subtitle,
-            fontSize: 12,
-            color: const Color(0xFF64748B),
+            str: title,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: _titleColor(),
+            textAlign: TextAlign.center,
           ),
+          if (subtitle.trim().isNotEmpty) ...[
+            const SizedBox(height: 6),
+            GlobalText(
+              str: subtitle,
+              fontSize: 12,
+              color: const Color(0xFF64748B),
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: 14),
+          if (markedAtText != null && markedAtText!.trim().isNotEmpty) ...[
+            GlobalText.raw(
+              markedAtText!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
           SizedBox(
             width: double.infinity,
             child: FilledButton(
               onPressed: enabled && !isLoading ? onMark : null,
+              // Keep marked state visually explicit even when disabled.
               style: FilledButton.styleFrom(
-                backgroundColor: enabled
-                    ? const Color(0xFF2563EB)
-                    : const Color(0xFFB7C3D2),
+                backgroundColor: _buttonColor(enabled: enabled),
+                disabledBackgroundColor: _buttonColor(enabled: false),
                 foregroundColor: Colors.white,
+                disabledForegroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(buttonLabel),
+              child: GlobalText.raw(
+                buttonLabel,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 10),
           Center(
-            child: Text(
+            child: GlobalText.raw(
               availabilityText,
               style: const TextStyle(
                 color: Color(0xFF94A3B8),
@@ -91,5 +119,22 @@ class AttendanceActionCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color? _titleColor() {
+    if (isMarked) {
+      return isMarkedLate ? const Color(0xFFDC2626) : const Color(0xFF16A34A);
+    }
+    if (isLateAction) {
+      return const Color(0xFFDC2626);
+    }
+    return null;
+  }
+
+  Color _buttonColor({required bool enabled}) {
+    if (isMarked) {
+      return isMarkedLate ? const Color(0xFFDC2626) : const Color(0xFF16A34A);
+    }
+    return enabled ? const Color(0xFF2563EB) : const Color(0xFFB7C3D2);
   }
 }

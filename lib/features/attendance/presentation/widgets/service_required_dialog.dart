@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 
 class ServiceRequiredDialog extends StatelessWidget {
@@ -14,12 +15,12 @@ class ServiceRequiredDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(context.loc.locationServiceRequiredTitle),
-      content: Text(message),
+      title: GlobalText.raw(context.loc.locationServiceRequiredTitle),
+      content: GlobalText.raw(message),
       actions: [
         TextButton(
           onPressed: onOpenSettings,
-          child: Text(context.loc.enableLocation),
+          child: GlobalText.raw(context.loc.enableLocation),
         ),
       ],
     );

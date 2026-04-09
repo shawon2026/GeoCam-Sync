@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/di/service_locator.dart';
 import '/core/presentation/widgets/global_appbar.dart';
@@ -25,7 +26,9 @@ class AttendanceHistoryScreen extends StatelessWidget {
             }
 
             if (state.history.isEmpty) {
-              return Center(child: Text(context.loc.noAttendanceHistory));
+              return Center(
+                child: GlobalText.raw(context.loc.noAttendanceHistory),
+              );
             }
 
             return ListView.separated(

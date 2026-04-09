@@ -81,7 +81,7 @@ class OfficeContextCard extends StatelessWidget {
                           color: Color(0xFF2563EB),
                         ),
                         const SizedBox(width: 6),
-                        Text(
+                        GlobalText.raw(
                           officeCoordinateText ??
                               context.loc.officeLocationNotSet,
                           style: const TextStyle(
@@ -115,7 +115,7 @@ class OfficeContextCard extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              label: Text(
+              label: GlobalText.raw(
                 hasOfficeLocation
                     ? context.loc.updateOfficeLocation
                     : context.loc.setOfficeLocation,

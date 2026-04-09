@@ -16,7 +16,8 @@ class CheckAttendanceEligibilityParams {
 class CheckAttendanceEligibility {
   AttendanceEligibility call(CheckAttendanceEligibilityParams params) {
     final inRange =
-        params.distanceMeters <= AttendanceConstants.inRangeThresholdMeters;
+        params.distanceMeters <=
+        AttendanceConstants.inRangeThresholdMeters.value;
     final alreadyMarked = params.todayRecord != null;
     final isLate = DateTimeHelper.isLate(DateTimeHelper.now());
 
