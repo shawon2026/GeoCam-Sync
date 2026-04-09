@@ -16,6 +16,8 @@ class UploadManagerPage extends StatelessWidget {
     required this.isPaused,
     required this.onPauseResume,
     required this.uploadSpeedMbps,
+    required this.onClearSyncedItems,
+    required this.onClearAllSyncedItems,
     super.key,
   });
 
@@ -26,10 +28,16 @@ class UploadManagerPage extends StatelessWidget {
   final bool isPaused;
   final VoidCallback onPauseResume;
   final double? uploadSpeedMbps;
+  final Future<void> Function(List<String> itemIds) onClearSyncedItems;
+  final Future<void> Function() onClearAllSyncedItems;
 
   @override
   Widget build(BuildContext context) {
-    final stateView = UploadManagerStateView(items: items);
+    final stateView = UploadManagerStateView(
+      items: items,
+      onClearSyncedItems: onClearSyncedItems,
+      onClearAllSyncedItems: onClearAllSyncedItems,
+    );
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),

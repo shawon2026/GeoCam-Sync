@@ -8,9 +8,16 @@ import '/features/upload_manager/presentation/widgets/upload_manager/pending_upl
 enum _UploadTab { pending, synced }
 
 class UploadManagerStateView extends StatefulWidget {
-  const UploadManagerStateView({required this.items, super.key});
+  const UploadManagerStateView({
+    required this.items,
+    required this.onClearSyncedItems,
+    required this.onClearAllSyncedItems,
+    super.key,
+  });
 
   final List<UploadItem> items;
+  final Future<void> Function(List<String> itemIds) onClearSyncedItems;
+  final Future<void> Function() onClearAllSyncedItems;
 
   @override
   State<UploadManagerStateView> createState() => _UploadManagerStateViewState();
@@ -18,6 +25,9 @@ class UploadManagerStateView extends StatefulWidget {
 
 class _UploadManagerStateViewState extends State<UploadManagerStateView> {
   _UploadTab _activeTab = _UploadTab.pending;
+  bool _selectionMode = false;
+  bool _isClearing = false;
+  final Set<String> _selectedSyncedIds = <String>{};
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +40,10 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
     final selectedItems = _activeTab == _UploadTab.pending
         ? pendingItems
         : syncedItems;
+
+    _selectedSyncedIds.removeWhere(
+      (id) => syncedItems.every((item) => item.id != id),
+    );
 
     if (widget.items.isEmpty) {
       return Column(
@@ -48,8 +62,46 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
           pendingCount: pendingItems.length,
           syncedCount: syncedItems.length,
           activeTab: _activeTab,
-          onTabChanged: (tab) => setState(() => _activeTab = tab),
+          onTabChanged: (tab) {
+            setState(() {
+              _activeTab = tab;
+              if (tab == _UploadTab.pending) {
+                _selectionMode = false;
+                _selectedSyncedIds.clear();
+              }
+            });
+          },
         ),
+        if (_activeTab == _UploadTab.synced && syncedItems.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          _SyncedActionsBar(
+            selectionMode: _selectionMode,
+            selectedCount: _selectedSyncedIds.length,
+            totalCount: syncedItems.length,
+            isBusy: _isClearing,
+            onToggleSelectionMode: () {
+              setState(() {
+                _selectionMode = !_selectionMode;
+                if (!_selectionMode) {
+                  _selectedSyncedIds.clear();
+                }
+              });
+            },
+            onToggleSelectAll: () {
+              setState(() {
+                if (_selectedSyncedIds.length == syncedItems.length) {
+                  _selectedSyncedIds.clear();
+                } else {
+                  _selectedSyncedIds
+                    ..clear()
+                    ..addAll(syncedItems.map((item) => item.id));
+                }
+              });
+            },
+            onClearSelected: _clearSelected,
+            onClearAll: _clearAll,
+          ),
+        ],
         const SizedBox(height: 14),
         if (selectedItems.isEmpty)
           EmptyUploadState(
@@ -58,9 +110,130 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
                 : context.loc.uploadManagerNoSyncedItems,
           )
         else
-          PendingUploadList(items: selectedItems),
+          PendingUploadList(
+            items: selectedItems,
+            isSelectable: _activeTab == _UploadTab.synced && _selectionMode,
+            selectedIds: _selectedSyncedIds,
+            onItemTap: _activeTab == _UploadTab.synced
+                ? (item) {
+                    if (!_selectionMode) {
+                      return;
+                    }
+                    setState(() {
+                      if (_selectedSyncedIds.contains(item.id)) {
+                        _selectedSyncedIds.remove(item.id);
+                      } else {
+                        _selectedSyncedIds.add(item.id);
+                      }
+                    });
+                  }
+                : null,
+            onItemLongPress: _activeTab == _UploadTab.synced
+                ? (item) {
+                    setState(() {
+                      _selectionMode = true;
+                      if (_selectedSyncedIds.contains(item.id)) {
+                        _selectedSyncedIds.remove(item.id);
+                      } else {
+                        _selectedSyncedIds.add(item.id);
+                      }
+                    });
+                  }
+                : null,
+            onDeleteTap: (_activeTab == _UploadTab.synced && !_selectionMode)
+                ? (item) => _clearSingle(item.id)
+                : null,
+          ),
       ],
     );
+  }
+
+  Future<void> _clearSingle(String itemId) async {
+    final shouldClear = await _confirmClear(
+      title: context.loc.uploadManagerClearSyncedSingle,
+      content: context.loc.uploadManagerClearSyncedConfirm,
+    );
+    if (!shouldClear) {
+      return;
+    }
+    await _runClearAction(() => widget.onClearSyncedItems([itemId]));
+  }
+
+  Future<void> _clearSelected() async {
+    if (_selectedSyncedIds.isEmpty) {
+      return;
+    }
+    final shouldClear = await _confirmClear(
+      title: context.loc.uploadManagerClearSelected,
+      content: context.loc.uploadManagerClearSyncedConfirm,
+    );
+    if (!shouldClear) {
+      return;
+    }
+    final ids = _selectedSyncedIds.toList(growable: false);
+    await _runClearAction(() async {
+      await widget.onClearSyncedItems(ids);
+      if (mounted) {
+        setState(() {
+          _selectedSyncedIds.clear();
+          _selectionMode = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _clearAll() async {
+    final shouldClear = await _confirmClear(
+      title: context.loc.uploadManagerClearAllSynced,
+      content: context.loc.uploadManagerClearSyncedConfirm,
+    );
+    if (!shouldClear) {
+      return;
+    }
+    await _runClearAction(() async {
+      await widget.onClearAllSyncedItems();
+      if (mounted) {
+        setState(() {
+          _selectedSyncedIds.clear();
+          _selectionMode = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _runClearAction(Future<void> Function() action) async {
+    if (_isClearing) {
+      return;
+    }
+    setState(() => _isClearing = true);
+    await action();
+    if (mounted) {
+      setState(() => _isClearing = false);
+    }
+  }
+
+  Future<bool> _confirmClear({
+    required String title,
+    required String content,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.loc.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(context.loc.delete),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 }
 
@@ -105,6 +278,66 @@ class _UploadTabs extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SyncedActionsBar extends StatelessWidget {
+  const _SyncedActionsBar({
+    required this.selectionMode,
+    required this.selectedCount,
+    required this.totalCount,
+    required this.isBusy,
+    required this.onToggleSelectionMode,
+    required this.onToggleSelectAll,
+    required this.onClearSelected,
+    required this.onClearAll,
+  });
+
+  final bool selectionMode;
+  final int selectedCount;
+  final int totalCount;
+  final bool isBusy;
+  final VoidCallback onToggleSelectionMode;
+  final VoidCallback onToggleSelectAll;
+  final Future<void> Function() onClearSelected;
+  final Future<void> Function() onClearAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        OutlinedButton(
+          onPressed: isBusy ? null : onToggleSelectionMode,
+          child: Text(
+            selectionMode
+                ? context.loc.cancel
+                : context.loc.uploadManagerSelect,
+          ),
+        ),
+        if (selectionMode)
+          OutlinedButton(
+            onPressed: isBusy ? null : onToggleSelectAll,
+            child: Text(
+              selectedCount == totalCount
+                  ? context.loc.uploadManagerUnselectAll
+                  : context.loc.uploadManagerSelectAll,
+            ),
+          ),
+        if (selectionMode)
+          FilledButton.tonal(
+            onPressed: isBusy || selectedCount == 0 ? null : onClearSelected,
+            child: Text(
+              '${context.loc.uploadManagerClearSelected} ($selectedCount)',
+            ),
+          ),
+        FilledButton.tonal(
+          onPressed: isBusy ? null : onClearAll,
+          child: Text(context.loc.uploadManagerClearAllSynced),
+        ),
+      ],
     );
   }
 }

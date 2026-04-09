@@ -124,6 +124,8 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
                     onPauseResume: uploadState.isPaused
                         ? _uploadManagerCubit.resumeAll
                         : _uploadManagerCubit.pauseAll,
+                    onClearSyncedItems: _uploadManagerCubit.clearSyncedItems,
+                    onClearAllSyncedItems: _uploadManagerCubit.clearAllSyncedItems,
                   );
                 },
               );

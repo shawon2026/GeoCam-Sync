@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '/core/utils/extension.dart';
+import '/features/upload_manager/domain/entities/sync_status.dart';
 import '/features/upload_manager/domain/entities/upload_progress.dart';
 
 class UploadSummaryCard extends StatelessWidget {
   const UploadSummaryCard({
     required this.summary,
+    required this.phase,
     required this.isPaused,
     required this.onPauseResume,
     required this.uploadSpeedMbps,
@@ -13,6 +15,7 @@ class UploadSummaryCard extends StatelessWidget {
   });
 
   final UploadProgress summary;
+  final SyncPhase phase;
   final bool isPaused;
   final VoidCallback onPauseResume;
   final double? uploadSpeedMbps;
@@ -73,8 +76,7 @@ class UploadSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '${summary.uploadedItems}/${summary.totalItems} '
-                  '${context.loc.uploadSummaryUploaded}',
+                  _statusLabel(context),
                   style: const TextStyle(
                     color: Color(0xFF64748B),
                     fontSize: 12.5,
@@ -117,5 +119,24 @@ class UploadSummaryCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _statusLabel(BuildContext context) {
+    if (isPaused || phase == SyncPhase.paused) {
+      return context.loc.uploadManagerPausedByUser;
+    }
+
+    switch (phase) {
+      case SyncPhase.uploading:
+        return context.loc.uploadManagerUploadingNow;
+      case SyncPhase.waiting:
+        return context.loc.uploadManagerWaitingNetworkIssue;
+      case SyncPhase.retrying:
+        return context.loc.uploadManagerRetrying;
+      case SyncPhase.idle:
+      case SyncPhase.completed:
+      case SyncPhase.paused:
+        return '---';
+    }
   }
 }

@@ -28,6 +28,8 @@ class UploadManagerHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showSummaryCard = hasItems && summary.pendingItems > 0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -43,10 +45,11 @@ class UploadManagerHeaderSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         SyncStatusChip(networkLabel: networkLabel, phase: phase),
-        if (hasItems) ...[
+        if (showSummaryCard) ...[
           const SizedBox(height: 12),
           UploadSummaryCard(
             summary: summary,
+            phase: phase,
             isPaused: isPaused,
             onPauseResume: onPauseResume,
             uploadSpeedMbps: uploadSpeedMbps,

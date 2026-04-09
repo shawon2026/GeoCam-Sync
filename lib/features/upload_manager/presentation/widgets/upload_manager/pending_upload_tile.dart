@@ -6,125 +6,177 @@ import '/core/utils/extension.dart';
 import '/features/upload_manager/domain/entities/upload_item.dart';
 
 class PendingUploadTile extends StatelessWidget {
-  const PendingUploadTile({required this.item, super.key});
+  const PendingUploadTile({
+    required this.item,
+    this.isSelectable = false,
+    this.isSelected = false,
+    this.onTap,
+    this.onLongPress,
+    this.onDeleteTap,
+    super.key,
+  });
 
   final UploadItem item;
+  final bool isSelectable;
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDeleteTap;
 
   @override
   Widget build(BuildContext context) {
     final visual = _visualForStatus(item.status);
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x14000000),
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 66,
-            height: 66,
-            decoration: BoxDecoration(
-              color: const Color(0xFFD8D7DE),
-              borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isSelected
+                  ? const Color(0xFF3B82F6)
+                  : const Color(0xFFE2E8F0),
+              width: isSelected ? 1.4 : 1,
             ),
-            clipBehavior: Clip.antiAlias,
-            alignment: Alignment.center,
-            child:
-                item.thumbnailPath != null &&
-                    File(item.thumbnailPath!).existsSync()
-                ? Image.file(
-                    File(item.thumbnailPath!),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  )
-                : Icon(visual.icon, color: visual.color, size: 28),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14000000),
+                blurRadius: 18,
+                offset: Offset(0, 8),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 66,
+                height: 66,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD8D7DE),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                clipBehavior: Clip.antiAlias,
+                alignment: Alignment.center,
+                child:
+                    item.thumbnailPath != null &&
+                        File(item.thumbnailPath!).existsSync()
+                    ? Image.file(
+                        File(item.thumbnailPath!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      )
+                    : Icon(visual.icon, color: visual.color, size: 28),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        item.fileName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: visual.isMuted
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF1E293B),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.2,
-                          decoration: item.status == UploadItemStatus.synced
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.fileName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: visual.isMuted
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF1E293B),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.2,
+                              decoration: item.status == UploadItemStatus.synced
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                            ),
+                          ),
                         ),
+                        if (item.status == UploadItemStatus.uploading)
+                          Text(
+                            '${_speedLabel(item.progress)} MB/s',
+                            style: const TextStyle(
+                              color: Color(0xFF57A6FF),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        if (item.status == UploadItemStatus.synced &&
+                            !isSelectable &&
+                            onDeleteTap != null) ...[
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: onDeleteTap,
+                            child: const Icon(
+                              Icons.delete_outline,
+                              color: Color(0xFF94A3B8),
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                        if (item.status == UploadItemStatus.synced &&
+                            isSelectable) ...[
+                          const SizedBox(width: 8),
+                          Icon(
+                            isSelected
+                                ? Icons.check_circle
+                                : Icons.radio_button_unchecked,
+                            color: isSelected
+                                ? const Color(0xFF3B82F6)
+                                : const Color(0xFF94A3B8),
+                            size: 20,
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _sizeLabel(item.fileSize),
+                      style: const TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    if (item.status == UploadItemStatus.uploading)
-                    Text(
-                      '${_speedLabel(item.progress)} MB/s',
-                      style: const TextStyle(
-                          color: Color(0xFF57A6FF),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
+                    const SizedBox(height: 8),
+                    if (item.status == UploadItemStatus.uploading) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          minHeight: 4,
+                          value: item.progress.clamp(0, 1),
+                          backgroundColor: const Color(0xFFE2E8F0),
+                          valueColor: const AlwaysStoppedAnimation(
+                            Color(0xFF57A6FF),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 6),
+                    ],
+                    Text(
+                      visual.label(context, item),
+                      style: TextStyle(
+                        color: visual.color,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.7,
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _sizeLabel(item.fileSize),
-                  style: const TextStyle(
-                    color: Color(0xFF64748B),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (item.status == UploadItemStatus.uploading) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      minHeight: 4,
-                      value: item.progress.clamp(0, 1),
-                      backgroundColor: const Color(0xFFE2E8F0),
-                      valueColor: const AlwaysStoppedAnimation(
-                        Color(0xFF57A6FF),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                ],
-                Text(
-                  visual.label(context, item),
-                  style: TextStyle(
-                    color: visual.color,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.7,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
