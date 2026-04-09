@@ -1,1 +1,0 @@
-enum LanguageOption { bangla, english }

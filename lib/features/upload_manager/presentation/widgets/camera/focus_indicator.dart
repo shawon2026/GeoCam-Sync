@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/features/upload_manager/domain/repositories/camera_repository.dart';
 
@@ -22,10 +23,10 @@ class FocusIndicator extends StatelessWidget {
       child: Align(
         alignment: alignment,
         child: Container(
-          width: 46,
-          height: 46,
+          width: 46.w,
+          height: 46.h,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(8.r),
             border: Border.all(color: Colors.white, width: 2),
           ),
         ),

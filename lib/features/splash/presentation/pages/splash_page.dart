@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/routes/app_routes.dart';
 import '/core/routes/navigation.dart';
 import '/core/utils/styles/k_assets.dart';
@@ -48,11 +49,11 @@ class _SplashPageState extends State<SplashPage>
             children: [
               Image.asset(
                 KAssetName.logoJpg.imagePath,
-                width: 150,
-                height: 150,
+                width: 150.w,
+                height: 150.h,
                 fit: BoxFit.contain,
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18.h),
               AnimatedLoadingText(controller: _loadingController),
             ],
           ),

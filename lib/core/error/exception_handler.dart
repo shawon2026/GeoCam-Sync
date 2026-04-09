@@ -21,26 +21,8 @@ Future<Either<Failure, T>> handleException<T>(
   try {
     final result = await operation();
     return Right(result);
-  } on ValidationException catch (e) {
-    return Left(
-      ValidationFailure(
-        message: e.message,
-        statusCode: e.statusCode,
-        errors: e.errors,
-      ),
-    );
-  } on UnauthorizedException catch (e) {
-    return Left(
-      AuthenticationFailure(message: e.message, statusCode: e.statusCode),
-    );
-  } on NetworkException catch (e) {
-    return Left(NetworkFailure(message: e.message, statusCode: e.statusCode));
-  } on ServerException catch (e) {
+  } on CacheException catch (e) {
     return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-  } on TooManyRequestsException catch (e) {
-    return Left(
-      TooManyRequestsFailure(message: e.message, statusCode: e.statusCode),
-    );
   } on LocationPermissionException catch (e) {
     return Left(
       ValidationFailure(message: e.message, statusCode: e.statusCode),

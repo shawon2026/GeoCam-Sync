@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/routes/app_routes.dart';
 import '/core/routes/navigation.dart';
 import '/core/utils/extension.dart';
@@ -20,7 +21,7 @@ class HomeContentSection extends StatelessWidget {
           onTap: () =>
               Navigation.push(context, appRoutes: AppRoutes.attendance),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12.h),
         HomeNavigationCard(
           title: context.loc.uploadManagerTitle,
           subtitle: context.loc.uploadManagerSubtitle,

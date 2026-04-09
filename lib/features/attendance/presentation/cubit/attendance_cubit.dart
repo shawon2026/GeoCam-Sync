@@ -157,7 +157,9 @@ class AttendanceCubit extends Cubit<AttendanceState> {
           ),
         );
 
-        final hasDistanceUpdate = await _listenDistance(waitForFirstEmission: true);
+        final hasDistanceUpdate = await _listenDistance(
+          waitForFirstEmission: true,
+        );
         if (!hasDistanceUpdate) {
           final distanceResult = await _getDistanceToOffice(NoParams());
           distanceResult.fold((_) => null, (distance) {
@@ -341,26 +343,31 @@ class AttendanceCubit extends Cubit<AttendanceState> {
 
   Future<bool> _listenDistance({bool waitForFirstEmission = false}) async {
     final firstEmission = waitForFirstEmission ? Completer<bool>() : null;
-    _distanceSubscription = _watchLiveDistance().listen((distance) {
-      if (isClosed) {
-        return;
-      }
-      final eligibility = _checkAttendanceEligibility(
-        CheckAttendanceEligibilityParams(
-          distanceMeters: distance,
-          todayRecord: state.todayRecord,
-        ),
-      );
-      emit(state.copyWith(distanceMeters: distance, eligibility: eligibility));
+    _distanceSubscription = _watchLiveDistance().listen(
+      (distance) {
+        if (isClosed) {
+          return;
+        }
+        final eligibility = _checkAttendanceEligibility(
+          CheckAttendanceEligibilityParams(
+            distanceMeters: distance,
+            todayRecord: state.todayRecord,
+          ),
+        );
+        emit(
+          state.copyWith(distanceMeters: distance, eligibility: eligibility),
+        );
 
-      if (firstEmission != null && !firstEmission.isCompleted) {
-        firstEmission.complete(true);
-      }
-    }, onError: (_) {
-      if (firstEmission != null && !firstEmission.isCompleted) {
-        firstEmission.complete(false);
-      }
-    });
+        if (firstEmission != null && !firstEmission.isCompleted) {
+          firstEmission.complete(true);
+        }
+      },
+      onError: (_) {
+        if (firstEmission != null && !firstEmission.isCompleted) {
+          firstEmission.complete(false);
+        }
+      },
+    );
 
     if (firstEmission == null) {
       return true;

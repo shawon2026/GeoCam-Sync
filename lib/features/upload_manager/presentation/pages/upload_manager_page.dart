@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/features/upload_manager/domain/entities/sync_status.dart';
 import '/features/upload_manager/domain/entities/upload_item.dart';
@@ -40,7 +41,7 @@ class UploadManagerPage extends StatelessWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 18.h),
       children: [
         UploadManagerHeaderSection(
           networkLabel: networkLabel,
@@ -51,7 +52,7 @@ class UploadManagerPage extends StatelessWidget {
           uploadSpeedMbps: uploadSpeedMbps,
           hasItems: items.isNotEmpty,
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         UploadManagerContentSection(items: items, stateView: stateView),
       ],
     );

@@ -4,7 +4,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 import '/core/di/service_locator.dart';
-import '/core/network/network_info.dart';
 import '../../utils/extension.dart';
 
 class GlobalNetworkListener extends StatefulWidget {
@@ -17,6 +16,9 @@ class GlobalNetworkListener extends StatefulWidget {
 }
 
 class _GlobalNetworkListenerState extends State<GlobalNetworkListener> {
+  Stream<List<ConnectivityResult>> get _connectivityStream =>
+      sl<Connectivity>().onConnectivityChanged;
+
   @override
   void initState() {
     super.initState();
@@ -24,12 +26,8 @@ class _GlobalNetworkListenerState extends State<GlobalNetworkListener> {
   }
 
   Future<void> _checkInitialConnectivity() async {
-    final networkInfo = sl<NetworkInfo>();
-    await networkInfo.internetAvailable();
-
     if (Platform.isAndroid) {
-      // Listen for connectivity changes
-      networkInfo.onConnectivityChanged.listen(_handleConnectivityChange);
+      _connectivityStream.listen(_handleConnectivityChange);
     }
   }
 

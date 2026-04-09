@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/theme/app_colors.dart';
 
 class AttendanceHistoryShimmerList extends StatelessWidget {
@@ -7,9 +8,9 @@ class AttendanceHistoryShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       itemCount: 6,
-      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      separatorBuilder: (context, index) => SizedBox(height: 10.h),
       itemBuilder: (context, index) => const _ShimmerCard(),
     );
   }
@@ -57,48 +58,48 @@ class _ShimmerCardState extends State<_ShimmerCard>
           margin: EdgeInsets.zero,
           color: AppColors.white.color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.r),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _ShimmerBox(
-                  width: 44,
-                  height: 44,
+                  width: 44.w,
+                  height: 44.h,
                   color: baseColor,
                   radius: 14,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _ShimmerBox(
                         width: double.infinity,
-                        height: 16,
+                        height: 16.h,
                         color: baseColor,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h),
                       _ShimmerBox(
-                        width: 180,
-                        height: 12,
+                        width: 180.w,
+                        height: 12.h,
                         color: baseColor.withValues(alpha: 0.9),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       Row(
                         children: [
                           _ShimmerBox(
-                            width: 92,
-                            height: 28,
+                            width: 92.w,
+                            height: 28.h,
                             color: baseColor,
                             radius: 999,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           _ShimmerBox(
-                            width: 110,
-                            height: 28,
+                            width: 110.w,
+                            height: 28.h,
                             color: baseColor.withValues(alpha: 0.9),
                             radius: 999,
                           ),

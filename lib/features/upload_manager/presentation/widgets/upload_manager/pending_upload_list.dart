@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/features/upload_manager/domain/entities/upload_item.dart';
 import '/features/upload_manager/presentation/widgets/upload_manager/pending_upload_tile.dart';
@@ -40,7 +41,7 @@ class PendingUploadList extends StatelessWidget {
           onDeleteTap: onDeleteTap == null ? null : () => onDeleteTap!(item),
         );
       },
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) => SizedBox(height: 12.h),
     );
   }
 }

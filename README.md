@@ -80,31 +80,27 @@ Inside `features/<module>/data/models/`, keep models separated by concern:
 
 This keeps API contract and local storage contract clean and scalable.
 
-## ✅ Task 1 Stack (Geo-Fenced Attendance)
+## ✅ Package Usage (Keypoints)
 
-- State Management: `flutter_bloc`, `equatable`
-- Location: `location`
-- Settings Redirect: `app_settings`
-- Local Database: `drift`, `drift_flutter`
-- Time Logic: `intl`
-- Code Generation: `build_runner`, `drift_dev`
-
-### Why this stack
-- State transitions are explicit and testable with Cubit.
-- Location + service checks and live updates are handled in one runtime package.
-- Settings redirection is handled with a focused utility package.
-- Drift provides structured daily attendance and history queries.
-
-### Why alternatives were not selected
-- `geolocator`: not used because this flow is implemented with `location`.
-- `permission_handler`: not required for current scope; settings redirect is handled by `app_settings`.
-- `hive`: not selected for query-driven attendance/history use case.
-- `shared_preferences`: not suitable for attendance record storage.
+- `flutter_bloc`, `equatable`: feature state + immutable state comparison (`attendance_cubit`, `upload_manager`, `sync_engine`, `camera_preview`).
+- `dartz`: repository/use-case return type as `Either<Failure, T>` (domain and data layers).
+- `get_it`: DI and object graph setup in `lib/core/di/service_locator.dart`.
+- `location`: GPS read, permission/service checks, and live distance stream in `lib/features/attendance/data/datasources/location_datasource.dart`.
+- `permission_handler`: camera permission gate in upload manager screens and permission service.
+- `app_settings`: open app/system settings flows (`core/services/app_settings_service.dart`).
+- `connectivity_plus`: connectivity stream + network probing (`core/network/connectivity_service.dart`, `global_network_listener.dart`).
+- `drift`, `drift_flutter`, `sqlite3_flutter_libs`: local SQL persistence for attendance + upload queue (`lib/db/...`).
+- `shared_preferences`: persisted language preference in `lib/core/localization/locale_manager.dart`.
+- `camera`, `path`, `path_provider`, `image`: camera capture, file pathing, temp storage, thumbnail generation in upload manager.
+- `flutter_screenutil`, `google_fonts`: responsive sizing and typography in global UI widgets.
+- `intl`: date/time formatting and localization helpers (`core/utils/date_time_helper.dart`, `l10n` generated classes).
+- `workmanager`: background upload trigger (`core/services/background_worker_service.dart`).
 
 ### Task 1 Docs
 - Package decision: `docs/task1/package-decision.md`
 - State matrix: `docs/task1/attendance-state-matrix.md`
 - Folder rationale: `docs/task1/folder-structure-rationale.md`
+- Full package usage map: `docs/setup/package-usage-map.md`
 
 ---
 

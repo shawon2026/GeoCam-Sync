@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
@@ -50,7 +51,7 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           EmptyUploadState(message: context.loc.uploadManagerEmptyState),
         ],
       );
@@ -74,7 +75,7 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
           },
         ),
         if (_activeTab == _UploadTab.synced && syncedItems.isNotEmpty) ...[
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           _SyncedActionsBar(
             selectionMode: _selectionMode,
             selectedCount: _selectedSyncedIds.length,
@@ -103,7 +104,7 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
             onClearAll: _clearAll,
           ),
         ],
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
         if (selectedItems.isEmpty)
           EmptyUploadState(
             message: _activeTab == _UploadTab.pending
@@ -254,10 +255,10 @@ class _UploadTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Row(
@@ -269,7 +270,7 @@ class _UploadTabs extends StatelessWidget {
               onTap: () => onTabChanged(_UploadTab.pending),
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6.w),
           Expanded(
             child: _UploadTabButton(
               label: '${context.loc.uploadManagerSynced} ($syncedCount)',
@@ -311,13 +312,13 @@ class _SyncedActionsBar extends StatelessWidget {
       children: [
         GlobalText.raw(
           context.loc.uploadManagerSyncedRetentionNote,
-          style: const TextStyle(
+          style: TextStyle(
             color: Color(0xFF64748B),
-            fontSize: 11.5,
+            fontSize: 11.5.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -374,18 +375,18 @@ class _UploadTabButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: isActive ? const Color(0xFF2D6CFA) : Colors.transparent,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10.r),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10.r),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           child: GlobalText.raw(
             label.toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isActive ? Colors.white : const Color(0xFF64748B),
-              fontSize: 11.5,
+              fontSize: 11.5.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.8,
             ),

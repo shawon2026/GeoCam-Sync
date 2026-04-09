@@ -59,14 +59,6 @@ class AppDatabase extends _$AppDatabase {
     return into(officeConfigs).insertOnConflictUpdate(companion);
   }
 
-  Future<void> clearAttendance() async {
-    await delete(attendanceRecords).go();
-  }
-
-  Future<void> clearOfficeConfig() async {
-    await delete(officeConfigs).go();
-  }
-
   Future<void> createUploadBatch(UploadBatchesCompanion companion) async {
     await into(uploadBatches).insertOnConflictUpdate(companion);
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 
@@ -9,9 +10,9 @@ class HomeHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -24,16 +25,16 @@ class HomeHeaderSection extends StatelessWidget {
           GlobalText(
             str: context.loc.homeNavigationHubTitle,
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w700,
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 8.h),
           GlobalText(
             str: context.loc.homeNavigationHubSubtitle,
             color: Color(0xFFE6FFFB),
-            fontSize: 13,
+            fontSize: 13.sp,
             fontWeight: FontWeight.w500,
-            height: 1.35,
+            height: 1.35.h,
           ),
         ],
       ),

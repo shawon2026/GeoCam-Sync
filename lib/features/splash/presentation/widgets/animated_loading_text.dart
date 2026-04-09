@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class AnimatedLoadingText extends StatelessWidget {
@@ -45,11 +46,11 @@ class AnimatedLoadingText extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 1.5),
+            padding: EdgeInsets.symmetric(horizontal: 1.5),
             child: GlobalText.raw(
               letters[index],
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.4,
               ),

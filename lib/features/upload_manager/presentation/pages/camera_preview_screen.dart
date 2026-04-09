@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -113,7 +114,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                 ),
                 SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
+                    padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 14.h),
                     child: Column(
                       children: [
                         Row(
@@ -130,7 +131,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                               onTap: _cameraPreviewCubit.toggleFlash,
                               transparent: true,
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10.w),
                             _CircleActionButton(
                               icon: Icons.settings_outlined,
                               onTap: () => openAppSettings(),
@@ -148,12 +149,12 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                             onChanged: _cameraPreviewCubit.changeZoom,
                           ),
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: 18.h),
                         ZoomPresetButtons(
                           selectedZoom: state.zoomLevel,
                           onSelect: _cameraPreviewCubit.changeZoom,
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: 24.h),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -174,7 +175,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: 18.h),
                         UploadBatchButton(
                           enabled: state.captures.isNotEmpty,
                           count: state.captures.length,
@@ -328,15 +329,15 @@ class _GalleryOverlay extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             GlobalText.raw(
               '${currentIndex + 1}/${captures.length}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white70,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14.h),
           ],
         ),
       ),

@@ -31,7 +31,7 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: backgroundColor ?? themeBgColor,
       title: GlobalText(
         str: title,
-        fontSize: 16,
+        fontSize: 16.sp,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
       ),
@@ -59,12 +59,12 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
         final isEnglishActive = locale.languageCode == 'en';
 
         return Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: EdgeInsets.only(right: 10.w),
           child: Container(
-            height: 34,
+            height: 34.h,
             decoration: BoxDecoration(
               color: const Color(0xFFE2E8F0),
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(18.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -113,21 +113,21 @@ class _LanguageSwitchOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(18.r),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
         decoration: BoxDecoration(
           color: isActive
               ? Theme.of(context).colorScheme.primary
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
         ),
         child: GlobalText(
           str: label,
-          fontSize: 12,
+          fontSize: 12.sp,
           fontWeight: FontWeight.w700,
           color: isActive ? Colors.white : const Color(0xFF475569),
         ),

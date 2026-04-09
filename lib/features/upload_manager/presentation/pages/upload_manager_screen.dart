@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -78,7 +79,7 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
         backgroundColor: const Color(0xFFF3F5F9),
         appBar: GlobalAppBar(title: context.loc.uploadManagerTitle),
         bottomNavigationBar: SafeArea(
-          minimum: const EdgeInsets.fromLTRB(16, 6, 16, 16),
+          minimum: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 16.h),
           child: BlocBuilder<SyncEngineCubit, SyncEngineState>(
             builder: (context, syncState) {
               return BlocBuilder<UploadManagerCubit, UploadManagerState>(
@@ -88,12 +89,12 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF3E73F1),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      padding: EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(14.r),
                       ),
-                      textStyle: const TextStyle(
-                        fontSize: 14,
+                      textStyle: TextStyle(
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1,
                       ),

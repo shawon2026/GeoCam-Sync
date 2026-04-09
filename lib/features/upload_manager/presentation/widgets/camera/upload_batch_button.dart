@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
@@ -26,14 +27,11 @@ class UploadBatchButton extends StatelessWidget {
           backgroundColor: const Color(0xFF2D66E8),
           foregroundColor: Colors.white,
           disabledBackgroundColor: const Color(0xFF8BA8EA),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16.r),
           ),
-          textStyle: const TextStyle(
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.1,
-          ),
+          textStyle: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1),
         ),
         label: GlobalText.raw(
           '${context.loc.uploadBatch.toUpperCase()} ($count)',

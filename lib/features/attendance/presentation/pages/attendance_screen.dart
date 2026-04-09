@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/di/service_locator.dart';
@@ -132,7 +133,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
               body: RefreshIndicator(
                 onRefresh: cubit.reload,
                 child: ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16.r),
                   physics: state.isOverlayLoading
                       ? const NeverScrollableScrollPhysics()
                       : const AlwaysScrollableScrollPhysics(),
@@ -144,16 +145,16 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                           : 'Lat : ${state.officeLocation!.latitude.toStringAsFixed(4)},  Lon : ${state.officeLocation!.longitude.toStringAsFixed(4)}',
                       onSetOfficeLocation: cubit.setOfficeLocationFromCurrent,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                     DistanceTrackerCard(
                       distanceMeters: state.distanceMeters,
                       inRange: state.eligibility?.inRange ?? false,
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     AttendanceStatusLabel(
                       text: context.loc.attendanceRuleLabel,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                     AttendanceActionCard(
                       title: _title(context, state),
                       subtitle: _subtitle(context, state),
@@ -167,7 +168,8 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                       availabilityText: _availabilityWindowText(context),
                       isMarked: state.eligibility?.isAlreadyMarked ?? false,
                       isMarkedLate: state.todayRecord?.status.name == 'late',
-                      isLateAction: (state.eligibility?.isLate ?? false) &&
+                      isLateAction:
+                          (state.eligibility?.isLate ?? false) &&
                           !(state.eligibility?.isAlreadyMarked ?? false),
                       showLockIcon: !_isActionEnabled(state),
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UploadManagerLoadingView extends StatefulWidget {
   const UploadManagerLoadingView({super.key});
@@ -33,21 +34,51 @@ class _UploadManagerLoadingViewState extends State<UploadManagerLoadingView>
     final highlightColor = const Color(0xFFF6F8FC);
 
     final skeleton = ListView(
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
+      padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 18.h),
       children: [
         Align(
-          child: _box(width: 160, height: 34, radius: 999, color: baseColor),
+          child: _box(
+            width: 160.w,
+            height: 34.h,
+            radius: 999,
+            color: baseColor,
+          ),
         ),
-        const SizedBox(height: 12),
-        _box(width: double.infinity, height: 142, radius: 18, color: baseColor),
-        const SizedBox(height: 18),
-        _box(width: double.infinity, height: 44, radius: 12, color: baseColor),
-        const SizedBox(height: 14),
-        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
-        const SizedBox(height: 12),
-        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
-        const SizedBox(height: 12),
-        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
+        SizedBox(height: 12.h),
+        _box(
+          width: double.infinity,
+          height: 142.h,
+          radius: 18,
+          color: baseColor,
+        ),
+        SizedBox(height: 18.h),
+        _box(
+          width: double.infinity,
+          height: 44.h,
+          radius: 12,
+          color: baseColor,
+        ),
+        SizedBox(height: 14.h),
+        _box(
+          width: double.infinity,
+          height: 94.h,
+          radius: 18,
+          color: baseColor,
+        ),
+        SizedBox(height: 12.h),
+        _box(
+          width: double.infinity,
+          height: 94.h,
+          radius: 18,
+          color: baseColor,
+        ),
+        SizedBox(height: 12.h),
+        _box(
+          width: double.infinity,
+          height: 94.h,
+          radius: 18,
+          color: baseColor,
+        ),
       ],
     );
 

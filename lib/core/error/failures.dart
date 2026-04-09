@@ -15,29 +15,6 @@ class ServerFailure extends Failure {
   const ServerFailure({required super.message, super.statusCode});
 }
 
-/// Cache failures for local storage errors
-class CacheFailure extends Failure {
-  const CacheFailure({required super.message, super.statusCode});
-}
-
-/// Network failures for connectivity issues
-class NetworkFailure extends Failure {
-  const NetworkFailure({required super.message, super.statusCode});
-}
-
-/// Authentication failures for auth-related errors
-class AuthenticationFailure extends Failure {
-  const AuthenticationFailure({required super.message, super.statusCode});
-}
-
-/// Method not allowed failures for 405 errors
-class MethodNotAllowedFailure extends Failure {
-  const MethodNotAllowedFailure({
-    required super.message,
-    super.statusCode = 405,
-  });
-}
-
 /// Validation failures for input validation errors
 class ValidationFailure extends Failure {
   final Map<String, dynamic>? errors;
@@ -78,12 +55,4 @@ class ValidationFailure extends Failure {
     }
     return firstValue.toString();
   }
-}
-
-/// Too many requests failures for 429 errors
-class TooManyRequestsFailure extends Failure {
-  const TooManyRequestsFailure({
-    required super.message,
-    super.statusCode = 429,
-  });
 }

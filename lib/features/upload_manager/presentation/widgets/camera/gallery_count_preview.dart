@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class GalleryCountPreview extends StatelessWidget {
@@ -19,13 +20,13 @@ class GalleryCountPreview extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 56.w,
+            height: 56.h,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.7),
-                width: 2,
+                width: 2.w,
               ),
               color: Colors.white.withValues(alpha: 0.78),
             ),
@@ -39,8 +40,8 @@ class GalleryCountPreview extends StatelessWidget {
               top: -8,
               right: -8,
               child: Container(
-                width: 24,
-                height: 24,
+                width: 24.w,
+                height: 24.h,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color(0xFF2563EB),
@@ -48,9 +49,9 @@ class GalleryCountPreview extends StatelessWidget {
                 alignment: Alignment.center,
                 child: GlobalText.raw(
                   '$count',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 11,
+                    fontSize: 11.sp,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

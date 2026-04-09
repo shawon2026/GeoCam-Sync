@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class ZoomSlider extends StatelessWidget {
@@ -18,20 +19,20 @@ class ZoomSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 42,
-      height: 230,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      width: 42.w,
+      height: 230.h,
+      padding: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.24),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         children: [
           GlobalText.raw(
             '${value.toStringAsFixed(1)}x',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -60,9 +61,9 @@ class ZoomSlider extends StatelessWidget {
           ),
           GlobalText.raw(
             '${min.toStringAsFixed(1).replaceAll('.0', '')}x',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w700,
             ),
           ),

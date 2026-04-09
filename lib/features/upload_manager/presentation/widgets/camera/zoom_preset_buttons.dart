@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class ZoomPresetButtons extends StatelessWidget {
@@ -20,12 +21,12 @@ class ZoomPresetButtons extends StatelessWidget {
       children: presets.map((zoom) {
         final isActive = (selectedZoom - zoom).abs() < 0.2;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.symmetric(horizontal: 8),
           child: GestureDetector(
             onTap: () => onSelect(zoom),
             child: Container(
-              width: 48,
-              height: 48,
+              width: 48.w,
+              height: 48.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isActive
@@ -39,7 +40,7 @@ class ZoomPresetButtons extends StatelessWidget {
                     : zoom.toStringAsFixed(1).replaceAll('.0', ''),
                 style: TextStyle(
                   color: isActive ? const Color(0xFF1F2937) : Colors.white,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),

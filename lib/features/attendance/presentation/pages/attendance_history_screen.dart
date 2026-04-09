@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/core/di/service_locator.dart';
@@ -32,10 +33,9 @@ class AttendanceHistoryScreen extends StatelessWidget {
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               itemCount: state.history.length,
-              separatorBuilder: (_, separatorIndex) =>
-                  const SizedBox(height: 10),
+              separatorBuilder: (_, separatorIndex) => SizedBox(height: 10.h),
               itemBuilder: (context, index) {
                 final item = state.history[index];
                 return AttendanceHistoryCard(item: item);

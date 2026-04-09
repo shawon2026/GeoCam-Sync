@@ -1,17 +1,12 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:location/location.dart';
-import '../../features/home/domain/usecases/get_home.dart';
 import '/core/services/app_settings_service.dart';
 import '/core/services/camera_permission_service.dart';
 import '/core/network/connectivity_service.dart';
 import '/db/app_database.dart';
-import '/core/network/api_client.dart';
-import '/core/network/network_info.dart';
 import '/core/services/background_worker_service.dart';
 import '/core/services/thumbnail_service.dart';
-import '/core/utils/preferences_helper.dart';
 import '/features/attendance/data/datasources/attendance_local_datasource.dart';
 import '/features/attendance/data/datasources/location_datasource.dart';
 import '/features/attendance/data/repositories/attendance_repository_impl.dart';
@@ -32,10 +27,6 @@ import '/features/attendance/domain/usecases/save_office_location.dart';
 import '/features/attendance/domain/usecases/watch_attendance_history.dart';
 import '/features/attendance/domain/usecases/watch_live_distance.dart';
 import '/features/attendance/presentation/cubit/attendance_cubit.dart';
-import '/features/home/data/datasources/home_remote_datasource.dart';
-import '/features/home/data/datasources/home_local_datasource.dart';
-import '/features/home/data/repositories/home_repository_impl.dart';
-import '/features/home/domain/repositories/home_repository.dart';
 import '/features/upload_manager/data/datasources/camera_datasource.dart';
 import '/features/upload_manager/data/datasources/local_upload_datasource.dart';
 import '/features/upload_manager/data/datasources/network_monitor_datasource.dart';
@@ -64,7 +55,6 @@ import '/features/upload_manager/domain/usecases/sync/watch_sync_status.dart';
 import '/features/upload_manager/domain/usecases/upload/add_files_to_queue.dart';
 import '/features/upload_manager/domain/usecases/upload/create_upload_batch.dart';
 import '/features/upload_manager/domain/usecases/upload/delete_synced_file_locally.dart';
-import '/features/upload_manager/domain/usecases/upload/get_pending_uploads.dart';
 import '/features/upload_manager/domain/usecases/upload/get_upload_summary.dart';
 import '/features/upload_manager/domain/usecases/upload/pause_all_uploads.dart';
 import '/features/upload_manager/domain/usecases/upload/resume_all_uploads.dart';
@@ -77,16 +67,11 @@ final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   // External
-  sl.registerLazySingleton<Dio>(() => Dio());
-  sl.registerLazySingleton<Connectivity>(() => Connectivity());
   sl.registerLazySingleton<Location>(() => Location());
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
+  sl.registerLazySingleton<Connectivity>(() => Connectivity());
 
   // Core
-  sl.registerLazySingleton<NetworkInfo>(
-    () => NetworkInfoImpl(connectivity: sl()),
-  );
-  sl.registerLazySingleton<PrefHelper>(() => PrefHelper.instance);
   sl.registerLazySingleton<AppSettingsService>(
     () => const AppSettingsService(),
   );
@@ -100,21 +85,6 @@ Future<void> initDependencies() async {
     () => const BackgroundWorkerService(),
   );
   sl.registerLazySingleton<ThumbnailService>(() => const ThumbnailService());
-  sl.registerLazySingleton<ApiClient>(
-    () => ApiClient(dio: sl(), prefHelper: sl()),
-  );
-
-  // Home Feature
-  sl.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSourceImpl(apiClient: sl()),
-  );
-  sl.registerLazySingleton<HomeLocalDataSource>(
-    () => HomeLocalDataSourceImpl(),
-  );
-  sl.registerLazySingleton<HomeRepository>(
-    () => HomeRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
-  );
-  sl.registerLazySingleton(() => GetHome(sl()));
 
   // Attendance Feature
   sl.registerLazySingleton<AttendanceLocalDataSource>(
@@ -207,7 +177,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => ResumeCameraPreview(sl()));
   sl.registerLazySingleton(() => CreateUploadBatch(sl()));
   sl.registerLazySingleton(() => AddFilesToQueue(sl()));
-  sl.registerLazySingleton(() => GetPendingUploads(sl()));
   sl.registerLazySingleton(() => GetUploadSummary(sl()));
   sl.registerLazySingleton(() => PauseAllUploads(sl()));
   sl.registerLazySingleton(() => ResumeAllUploads(sl()));

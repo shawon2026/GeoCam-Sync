@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 import 'dart:io';
 
@@ -31,14 +32,14 @@ class PendingUploadTile extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(18.r),
         onTap: onTap,
         onLongPress: onLongPress,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(12.r),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(18.r),
             border: Border.all(
               color: isSelected
                   ? const Color(0xFF3B82F6)
@@ -57,11 +58,11 @@ class PendingUploadTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 66,
-                height: 66,
+                width: 66.w,
+                height: 66.h,
                 decoration: BoxDecoration(
                   color: const Color(0xFFD8D7DE),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 clipBehavior: Clip.antiAlias,
                 alignment: Alignment.center,
@@ -76,7 +77,7 @@ class PendingUploadTile extends StatelessWidget {
                       )
                     : Icon(visual.icon, color: visual.color, size: 28),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +94,7 @@ class PendingUploadTile extends StatelessWidget {
                               color: visual.isMuted
                                   ? const Color(0xFF94A3B8)
                                   : const Color(0xFF1E293B),
-                              fontSize: 15,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.2,
                               decoration: item.status == UploadItemStatus.synced
@@ -105,16 +106,16 @@ class PendingUploadTile extends StatelessWidget {
                         if (item.status == UploadItemStatus.uploading)
                           GlobalText.raw(
                             '${_speedLabel(item.progress)} MB/s',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Color(0xFF57A6FF),
-                              fontSize: 11,
+                              fontSize: 11.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                         if (item.status == UploadItemStatus.synced &&
                             !isSelectable &&
                             onDeleteTap != null) ...[
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           GestureDetector(
                             onTap: onDeleteTap,
                             child: const Icon(
@@ -126,7 +127,7 @@ class PendingUploadTile extends StatelessWidget {
                         ],
                         if (item.status == UploadItemStatus.synced &&
                             isSelectable) ...[
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           Icon(
                             isSelected
                                 ? Icons.check_circle
@@ -139,19 +140,19 @@ class PendingUploadTile extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4.h),
                     GlobalText.raw(
                       _sizeLabel(item.fileSize),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Color(0xFF64748B),
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     if (item.status == UploadItemStatus.uploading) ...[
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(999),
+                        borderRadius: BorderRadius.circular(999.r),
                         child: LinearProgressIndicator(
                           minHeight: 4,
                           value: item.progress.clamp(0, 1),
@@ -161,13 +162,13 @@ class PendingUploadTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6.h),
                     ],
                     GlobalText.raw(
                       visual.label(context, item),
                       style: TextStyle(
                         color: visual.color,
-                        fontSize: 11.5,
+                        fontSize: 11.5.sp,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.7,
                       ),

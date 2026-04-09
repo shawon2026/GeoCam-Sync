@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 import '/features/upload_manager/domain/entities/sync_status.dart';
@@ -44,22 +45,22 @@ class SyncStatusChip extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 9.h),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(999.r),
         border: Border.all(color: borderColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.circle, size: 9, color: dotColor),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           GlobalText.raw(
             '$networkLabel  ${_phaseLabel(phase)}',
             style: TextStyle(
               color: dotColor,
-              fontSize: 11.5,
+              fontSize: 11.5.sp,
               fontWeight: FontWeight.w800,
               letterSpacing: 1,
             ),

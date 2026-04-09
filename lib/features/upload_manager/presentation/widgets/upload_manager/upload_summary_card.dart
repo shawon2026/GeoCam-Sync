@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
@@ -26,10 +27,10 @@ class UploadSummaryCard extends StatelessWidget {
     final uploadedPercent = (summary.completion * 100).round();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(18.r),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
@@ -40,9 +41,9 @@ class UploadSummaryCard extends StatelessWidget {
               Expanded(
                 child: GlobalText.raw(
                   context.loc.uploadManagerBatchSyncProgress.toUpperCase(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color(0xFF64748B),
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
                   ),
@@ -50,17 +51,17 @@ class UploadSummaryCard extends StatelessWidget {
               ),
               GlobalText.raw(
                 '$uploadedPercent%',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Color(0xFF475569),
-                  fontSize: 13,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           ClipRRect(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(999.r),
             child: TweenAnimationBuilder<double>(
               tween: Tween<double>(begin: 0, end: summary.completion),
               duration: const Duration(milliseconds: 300),
@@ -72,15 +73,15 @@ class UploadSummaryCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h),
           Row(
             children: [
               Expanded(
                 child: GlobalText.raw(
                   _statusLabel(context),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color(0xFF64748B),
-                    fontSize: 12.5,
+                    fontSize: 12.5.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -89,13 +90,13 @@ class UploadSummaryCard extends StatelessWidget {
                 uploadSpeedMbps == null
                     ? '-- Mbps'
                     : '${uploadSpeedMbps!.toStringAsFixed(1)} Mbps',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Color(0xFF0F172A),
-                  fontSize: 12,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               TextButton(
                 onPressed: onPauseResume,
                 style: TextButton.styleFrom(
@@ -108,8 +109,8 @@ class UploadSummaryCard extends StatelessWidget {
                   isPaused
                       ? context.loc.resumeAllUploads.toUpperCase()
                       : context.loc.pauseAllUploads.toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
                   ),

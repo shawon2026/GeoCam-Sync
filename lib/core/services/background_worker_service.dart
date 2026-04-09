@@ -2,7 +2,6 @@ import 'package:workmanager/workmanager.dart';
 
 import '/core/di/service_locator.dart';
 import '/core/usecases/usecase.dart';
-import '/core/utils/preferences_helper.dart';
 import '/features/upload_manager/domain/usecases/sync/process_upload_queue.dart';
 
 const String uploadSyncTaskName = 'geocam_upload_sync';
@@ -12,7 +11,6 @@ const String uploadSyncUniqueName =
 @pragma('vm:entry-point')
 void uploadWorkerDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    await PrefHelper.init();
     if (!sl.isRegistered<ProcessUploadQueue>()) {
       await initDependencies();
     }

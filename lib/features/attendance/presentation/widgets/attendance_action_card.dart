@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class AttendanceActionCard extends StatelessWidget {
@@ -35,13 +36,13 @@ class AttendanceActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: enabled ? const Color(0xFFD1D5DB) : const Color(0xFFCBD5E1),
-          width: 1.2,
+          width: 1.2.w,
         ),
       ),
       child: Column(
@@ -51,36 +52,36 @@ class AttendanceActionCard extends StatelessWidget {
             const Center(
               child: Icon(Icons.lock_outline_rounded, color: Color(0xFF94A3B8)),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
           ],
           GlobalText(
             str: title,
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w700,
             color: _titleColor(),
             textAlign: TextAlign.center,
           ),
           if (subtitle.trim().isNotEmpty) ...[
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             GlobalText(
               str: subtitle,
-              fontSize: 12,
+              fontSize: 12.sp,
               color: const Color(0xFF64748B),
               textAlign: TextAlign.center,
             ),
           ],
-          const SizedBox(height: 14),
+          SizedBox(height: 14.h),
           if (markedAtText != null && markedAtText!.trim().isNotEmpty) ...[
             GlobalText.raw(
               markedAtText!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Color(0xFF64748B),
-                fontSize: 12,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10.h),
           ],
           SizedBox(
             width: double.infinity,
@@ -93,9 +94,9 @@ class AttendanceActionCard extends StatelessWidget {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(vertical: 14),
               ),
               child: GlobalText.raw(
                 buttonLabel,
@@ -104,13 +105,13 @@ class AttendanceActionCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Center(
             child: GlobalText.raw(
               availabilityText,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Color(0xFF94A3B8),
-                fontSize: 11,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
               ),

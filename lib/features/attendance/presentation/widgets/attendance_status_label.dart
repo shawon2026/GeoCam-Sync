@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/presentation/widgets/global_text.dart';
 
 class AttendanceStatusLabel extends StatelessWidget {
@@ -11,7 +12,7 @@ class AttendanceStatusLabel extends StatelessWidget {
     return Center(
       child: GlobalText(
         str: text,
-        fontSize: 11,
+        fontSize: 11.sp,
         fontWeight: FontWeight.w700,
         color: const Color(0xFF94A3B8),
         textAlign: TextAlign.center,
