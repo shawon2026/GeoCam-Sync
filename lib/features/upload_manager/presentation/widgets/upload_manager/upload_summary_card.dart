@@ -20,7 +20,6 @@ class UploadSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uploadedPercent = (summary.completion * 100).round();
-    final remainingPercent = (100 - uploadedPercent).clamp(0, 100);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -74,8 +73,8 @@ class UploadSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  '${context.loc.uploadSummaryUploaded}: $uploadedPercent%  '
-                  '${context.loc.uploadSummaryPending}: $remainingPercent%',
+                  '${summary.uploadedItems}/${summary.totalItems} '
+                  '${context.loc.uploadSummaryUploaded}',
                   style: const TextStyle(
                     color: Color(0xFF64748B),
                     fontSize: 12.5,
@@ -114,16 +113,6 @@ class UploadSummaryCard extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${context.loc.uploadSummaryUploaded}: ${summary.uploadedItems}   '
-            '${context.loc.uploadSummaryPending}: ${summary.pendingItems}',
-            style: const TextStyle(
-              color: Color(0xFF94A3B8),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ],
       ),

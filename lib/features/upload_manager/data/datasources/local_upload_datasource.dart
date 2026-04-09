@@ -131,13 +131,6 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
     if (await file.exists()) {
       await file.delete();
     }
-    if (item.thumbnailPath != null) {
-      final thumbnail = File(item.thumbnailPath!);
-      if (await thumbnail.exists()) {
-        await thumbnail.delete();
-      }
-    }
-    await _database.deleteUploadItem(itemId);
   }
 
   @override
