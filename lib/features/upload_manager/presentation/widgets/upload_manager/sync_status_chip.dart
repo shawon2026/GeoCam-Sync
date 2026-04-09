@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/features/upload_manager/domain/entities/sync_status.dart';
 
@@ -54,7 +55,7 @@ class SyncStatusChip extends StatelessWidget {
         children: [
           Icon(Icons.circle, size: 9, color: dotColor),
           const SizedBox(width: 8),
-          Text(
+          GlobalText.raw(
             '$networkLabel  ${_phaseLabel(phase)}',
             style: TextStyle(
               color: dotColor,

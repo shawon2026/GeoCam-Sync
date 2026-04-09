@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -71,7 +72,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
           if (state.message != null) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message!)));
+            ).showSnackBar(SnackBar(content: GlobalText.raw(state.message!)));
           }
         },
         builder: (context, state) {
@@ -217,7 +218,9 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
           return;
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unable to create an upload batch')),
+          const SnackBar(
+            content: GlobalText.raw('Unable to create an upload batch'),
+          ),
         );
         return;
       }
@@ -230,7 +233,9 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
           return;
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unable to queue the captured photos')),
+          const SnackBar(
+            content: GlobalText.raw('Unable to queue the captured photos'),
+          ),
         );
         return;
       }
@@ -244,9 +249,9 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen> {
       if (!context.mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Upload batch failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: GlobalText.raw('Upload batch failed: $e')),
+      );
     }
   }
 }
@@ -324,7 +329,7 @@ class _GalleryOverlay extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            GlobalText.raw(
               '${currentIndex + 1}/${captures.length}',
               style: const TextStyle(
                 color: Colors.white70,

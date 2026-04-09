@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'dart:io';
 
 import '/core/constants/upload_constants.dart';
@@ -84,7 +85,7 @@ class PendingUploadTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Text(
+                          child: GlobalText.raw(
                             item.fileName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -102,7 +103,7 @@ class PendingUploadTile extends StatelessWidget {
                           ),
                         ),
                         if (item.status == UploadItemStatus.uploading)
-                          Text(
+                          GlobalText.raw(
                             '${_speedLabel(item.progress)} MB/s',
                             style: const TextStyle(
                               color: Color(0xFF57A6FF),
@@ -139,7 +140,7 @@ class PendingUploadTile extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    GlobalText.raw(
                       _sizeLabel(item.fileSize),
                       style: const TextStyle(
                         color: Color(0xFF64748B),
@@ -162,7 +163,7 @@ class PendingUploadTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                     ],
-                    Text(
+                    GlobalText.raw(
                       visual.label(context, item),
                       style: TextStyle(
                         color: visual.color,
@@ -218,7 +219,7 @@ class PendingUploadTile extends StatelessWidget {
           icon: Icons.wifi_tethering_error_rounded,
           isMuted: false,
           label: (context, item) =>
-              '${context.loc.uploadManagerRetrying} (${context.loc.uploadManagerAttempt} ${item.retryCount + 1}/${UploadConstants.maxRetryCount + 1})',
+              '${context.loc.uploadManagerRetrying} (${context.loc.uploadManagerAttempt} ${item.retryCount + 1}/${UploadConstants.maxRetryCount.value.toInt() + 1})',
         );
       case UploadItemStatus.paused:
         return _UploadTileVisual(

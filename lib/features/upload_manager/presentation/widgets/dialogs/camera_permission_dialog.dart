@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 
@@ -10,16 +11,16 @@ class CameraPermissionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(context.loc.cameraPermissionTitle),
-      content: Text(context.loc.cameraPermissionHint),
+      title: GlobalText.raw(context.loc.cameraPermissionTitle),
+      content: GlobalText.raw(context.loc.cameraPermissionHint),
       actions: [
         TextButton(
           onPressed: onGivePermission,
-          child: Text(context.loc.goToSettings),
+          child: GlobalText.raw(context.loc.goToSettings),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(context.loc.closeButton),
+          child: GlobalText.raw(context.loc.closeButton),
         ),
       ],
     );

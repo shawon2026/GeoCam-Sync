@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 class ZoomSlider extends StatelessWidget {
   const ZoomSlider({
@@ -26,7 +27,7 @@ class ZoomSlider extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(
+          GlobalText.raw(
             '${value.toStringAsFixed(1)}x',
             style: const TextStyle(
               color: Colors.white,
@@ -57,7 +58,7 @@ class ZoomSlider extends StatelessWidget {
               ),
             ),
           ),
-          Text(
+          GlobalText.raw(
             '${min.toStringAsFixed(1).replaceAll('.0', '')}x',
             style: const TextStyle(
               color: Colors.white,

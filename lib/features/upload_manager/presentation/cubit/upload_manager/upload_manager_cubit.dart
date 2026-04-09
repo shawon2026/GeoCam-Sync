@@ -68,9 +68,10 @@ class UploadManagerCubit extends Cubit<UploadManagerState> {
         .where((item) => item.status == UploadItemStatus.synced)
         .map((item) => item.id)
         .toSet();
-    final uniqueIds = itemIds.toSet().where(syncedIds.contains).toList(
-      growable: false,
-    );
+    final uniqueIds = itemIds
+        .toSet()
+        .where(syncedIds.contains)
+        .toList(growable: false);
     if (uniqueIds.isEmpty) {
       return;
     }

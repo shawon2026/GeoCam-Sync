@@ -139,7 +139,11 @@ class SyncRepositoryImpl implements SyncRepository {
                 uploadSpeedMbps: null,
               ),
             );
-            await Future<void>.delayed(UploadConstants.retryDelay);
+            await Future<void>.delayed(
+              Duration(
+                seconds: UploadConstants.retryDelaySeconds.value.toInt(),
+              ),
+            );
             await _localUploadDataSource.markWaitingItemsPending();
             continue;
           }
@@ -154,7 +158,9 @@ class SyncRepositoryImpl implements SyncRepository {
               uploadSpeedMbps: null,
             ),
           );
-          await Future<void>.delayed(UploadConstants.retryDelay);
+          await Future<void>.delayed(
+            Duration(seconds: UploadConstants.retryDelaySeconds.value.toInt()),
+          );
           await _localUploadDataSource.markFailedItemsForRetry();
           continue;
         } catch (_) {
@@ -168,7 +174,9 @@ class SyncRepositoryImpl implements SyncRepository {
               uploadSpeedMbps: null,
             ),
           );
-          await Future<void>.delayed(UploadConstants.retryDelay);
+          await Future<void>.delayed(
+            Duration(seconds: UploadConstants.retryDelaySeconds.value.toInt()),
+          );
           await _localUploadDataSource.markFailedItemsForRetry();
           continue;
         }

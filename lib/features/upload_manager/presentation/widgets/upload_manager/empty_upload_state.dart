@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 
 class EmptyUploadState extends StatelessWidget {
@@ -24,7 +25,7 @@ class EmptyUploadState extends StatelessWidget {
             color: Color(0xFF94A3B8),
           ),
           const SizedBox(height: 12),
-          Text(
+          GlobalText.raw(
             context.loc.uploadManagerNoUploadsYet,
             textAlign: TextAlign.center,
             style: const TextStyle(
@@ -34,7 +35,7 @@ class EmptyUploadState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          GlobalText.raw(
             message,
             textAlign: TextAlign.center,
             style: const TextStyle(

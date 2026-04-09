@@ -1,7 +1,10 @@
-class UploadConstants {
-  static const int maxConcurrentUploads = 1;
-  static const int maxSyncedHistoryItems = 20;
-  static const int maxRetryCount = 3;
-  static const Duration retryDelay = Duration(seconds: 2);
-  static const double defaultZoom = 1;
+enum UploadConstants {
+  maxConcurrentUploads(1),
+  maxSyncedHistoryItems(20),
+  maxRetryCount(3),
+  retryDelaySeconds(2),
+  defaultZoom(1);
+
+  final num value;
+  const UploadConstants(this.value);
 }

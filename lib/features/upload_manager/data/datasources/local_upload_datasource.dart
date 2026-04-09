@@ -193,7 +193,7 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
     final items = await _database.getUploadItems();
     for (final item in items) {
       if (item.status == domain.UploadItemStatus.failed &&
-          item.retryCount < UploadConstants.maxRetryCount) {
+          item.retryCount < UploadConstants.maxRetryCount.value.toInt()) {
         await _database.updateUploadItemStatus(
           id: item.id,
           status: domain.UploadItemStatus.pending,
@@ -403,11 +403,14 @@ class LocalUploadDataSourceImpl implements LocalUploadDataSource {
             .toList(growable: false)
           ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
 
-    if (syncedRows.length <= UploadConstants.maxSyncedHistoryItems) {
+    if (syncedRows.length <=
+        UploadConstants.maxSyncedHistoryItems.value.toInt()) {
       return;
     }
 
-    final removable = syncedRows.skip(UploadConstants.maxSyncedHistoryItems);
+    final removable = syncedRows.skip(
+      UploadConstants.maxSyncedHistoryItems.value.toInt(),
+    );
     for (final row in removable) {
       await _deleteFileIfExists(row.localFilePath);
       if (row.thumbnailPath != null) {

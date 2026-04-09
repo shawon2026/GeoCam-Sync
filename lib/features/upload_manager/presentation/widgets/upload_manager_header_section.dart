@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import '/core/utils/extension.dart';
 
 import '/features/upload_manager/domain/entities/sync_status.dart';
@@ -33,7 +34,7 @@ class UploadManagerHeaderSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
+        GlobalText.raw(
           context.loc.networkStatusTitle.toUpperCase(),
           textAlign: TextAlign.center,
           style: const TextStyle(

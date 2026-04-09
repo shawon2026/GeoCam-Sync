@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 
@@ -37,7 +38,7 @@ class StartNewBatchButton extends StatelessWidget {
               letterSpacing: 1,
             ),
           ),
-          child: Text(context.loc.startNewUploadBatch.toUpperCase()),
+          child: GlobalText.raw(context.loc.startNewUploadBatch.toUpperCase()),
         ),
       ),
     );

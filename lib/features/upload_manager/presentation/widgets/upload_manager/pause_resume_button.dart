@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 
@@ -17,7 +18,7 @@ class PauseResumeButton extends StatelessWidget {
     return FilledButton.icon(
       onPressed: onPressed,
       icon: Icon(isPaused ? Icons.play_arrow : Icons.pause),
-      label: Text(
+      label: GlobalText.raw(
         isPaused ? context.loc.resumeAllUploads : context.loc.pauseAllUploads,
       ),
     );

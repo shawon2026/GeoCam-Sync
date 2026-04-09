@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 import '/features/upload_manager/domain/entities/upload_item.dart';
@@ -219,16 +220,16 @@ class _UploadManagerStateViewState extends State<UploadManagerStateView> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
+        title: GlobalText.raw(title),
+        content: GlobalText.raw(content),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(context.loc.cancel),
+            child: GlobalText.raw(context.loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.loc.delete),
+            child: GlobalText.raw(context.loc.delete),
           ),
         ],
       ),
@@ -308,7 +309,7 @@ class _SyncedActionsBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        GlobalText.raw(
           context.loc.uploadManagerSyncedRetentionNote,
           style: const TextStyle(
             color: Color(0xFF64748B),
@@ -323,7 +324,7 @@ class _SyncedActionsBar extends StatelessWidget {
           children: [
             OutlinedButton(
               onPressed: isBusy ? null : onToggleSelectionMode,
-              child: Text(
+              child: GlobalText.raw(
                 selectionMode
                     ? context.loc.cancel
                     : context.loc.uploadManagerSelect,
@@ -332,7 +333,7 @@ class _SyncedActionsBar extends StatelessWidget {
             if (selectionMode)
               OutlinedButton(
                 onPressed: isBusy ? null : onToggleSelectAll,
-                child: Text(
+                child: GlobalText.raw(
                   selectedCount == totalCount
                       ? context.loc.uploadManagerUnselectAll
                       : context.loc.uploadManagerSelectAll,
@@ -343,13 +344,13 @@ class _SyncedActionsBar extends StatelessWidget {
                 onPressed: isBusy || selectedCount == 0
                     ? null
                     : onClearSelected,
-                child: Text(
+                child: GlobalText.raw(
                   '${context.loc.uploadManagerClearSelected} ($selectedCount)',
                 ),
               ),
             FilledButton.tonal(
               onPressed: isBusy ? null : onClearAll,
-              child: Text(context.loc.uploadManagerClearAllSynced),
+              child: GlobalText.raw(context.loc.uploadManagerClearAllSynced),
             ),
           ],
         ),
@@ -379,7 +380,7 @@ class _UploadTabButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          child: Text(
+          child: GlobalText.raw(
             label.toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyle(

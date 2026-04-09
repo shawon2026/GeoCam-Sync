@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 
@@ -34,7 +35,9 @@ class UploadBatchButton extends StatelessWidget {
             letterSpacing: 1.1,
           ),
         ),
-        label: Text('${context.loc.uploadBatch.toUpperCase()} ($count)'),
+        label: GlobalText.raw(
+          '${context.loc.uploadBatch.toUpperCase()} ($count)',
+        ),
       ),
     );
   }

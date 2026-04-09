@@ -36,48 +36,18 @@ class _UploadManagerLoadingViewState extends State<UploadManagerLoadingView>
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 18),
       children: [
         Align(
-          child: _box(
-            width: 160,
-            height: 34,
-            radius: 999,
-            color: baseColor,
-          ),
+          child: _box(width: 160, height: 34, radius: 999, color: baseColor),
         ),
         const SizedBox(height: 12),
-        _box(
-          width: double.infinity,
-          height: 142,
-          radius: 18,
-          color: baseColor,
-        ),
+        _box(width: double.infinity, height: 142, radius: 18, color: baseColor),
         const SizedBox(height: 18),
-        _box(
-          width: double.infinity,
-          height: 44,
-          radius: 12,
-          color: baseColor,
-        ),
+        _box(width: double.infinity, height: 44, radius: 12, color: baseColor),
         const SizedBox(height: 14),
-        _box(
-          width: double.infinity,
-          height: 94,
-          radius: 18,
-          color: baseColor,
-        ),
+        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
         const SizedBox(height: 12),
-        _box(
-          width: double.infinity,
-          height: 94,
-          radius: 18,
-          color: baseColor,
-        ),
+        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
         const SizedBox(height: 12),
-        _box(
-          width: double.infinity,
-          height: 94,
-          radius: 18,
-          color: baseColor,
-        ),
+        _box(width: double.infinity, height: 94, radius: 18, color: baseColor),
       ],
     );
 

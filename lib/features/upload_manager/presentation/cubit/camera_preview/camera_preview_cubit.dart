@@ -189,11 +189,6 @@ class CameraPreviewCubit extends Cubit<CameraPreviewState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        captures: nextCaptures,
-        galleryIndex: nextIndex,
-      ),
-    );
+    emit(state.copyWith(captures: nextCaptures, galleryIndex: nextIndex));
   }
 }

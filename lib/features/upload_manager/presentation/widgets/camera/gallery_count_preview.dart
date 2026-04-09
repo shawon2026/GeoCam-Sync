@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 class GalleryCountPreview extends StatelessWidget {
   const GalleryCountPreview({
@@ -45,7 +46,7 @@ class GalleryCountPreview extends StatelessWidget {
                   color: Color(0xFF2563EB),
                 ),
                 alignment: Alignment.center,
-                child: Text(
+                child: GlobalText.raw(
                   '$count',
                   style: const TextStyle(
                     color: Colors.white,

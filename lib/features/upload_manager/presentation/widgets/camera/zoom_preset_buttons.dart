@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 class ZoomPresetButtons extends StatelessWidget {
   const ZoomPresetButtons({
@@ -32,7 +33,7 @@ class ZoomPresetButtons extends StatelessWidget {
                     : Colors.black.withValues(alpha: 0.34),
               ),
               alignment: Alignment.center,
-              child: Text(
+              child: GlobalText.raw(
                 zoom == 1.0
                     ? '1x'
                     : zoom.toStringAsFixed(1).replaceAll('.0', ''),

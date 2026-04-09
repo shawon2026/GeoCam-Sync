@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -75,9 +76,7 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
       ],
       child: Scaffold(
         backgroundColor: const Color(0xFFF3F5F9),
-        appBar: GlobalAppBar(
-          title: context.loc.uploadManagerTitle,
-        ),
+        appBar: GlobalAppBar(title: context.loc.uploadManagerTitle),
         bottomNavigationBar: SafeArea(
           minimum: const EdgeInsets.fromLTRB(16, 6, 16, 16),
           child: BlocBuilder<SyncEngineCubit, SyncEngineState>(
@@ -99,7 +98,7 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
                         letterSpacing: 1,
                       ),
                     ),
-                    child: Text(
+                    child: GlobalText.raw(
                       context.loc.startNewUploadBatch.toUpperCase(),
                     ),
                   );
@@ -127,7 +126,8 @@ class _UploadManagerScreenState extends State<UploadManagerScreen>
                         ? () => unawaited(_resumeAndProcessQueue())
                         : () => unawaited(_uploadManagerCubit.pauseAll()),
                     onClearSyncedItems: _uploadManagerCubit.clearSyncedItems,
-                    onClearAllSyncedItems: _uploadManagerCubit.clearAllSyncedItems,
+                    onClearAllSyncedItems:
+                        _uploadManagerCubit.clearAllSyncedItems,
                   );
                 },
               );

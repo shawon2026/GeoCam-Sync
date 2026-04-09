@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 import '/core/utils/extension.dart';
 import '/features/upload_manager/domain/entities/sync_status.dart';
@@ -37,7 +38,7 @@ class UploadSummaryCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: GlobalText.raw(
                   context.loc.uploadManagerBatchSyncProgress.toUpperCase(),
                   style: const TextStyle(
                     color: Color(0xFF64748B),
@@ -47,7 +48,7 @@ class UploadSummaryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
+              GlobalText.raw(
                 '$uploadedPercent%',
                 style: const TextStyle(
                   color: Color(0xFF475569),
@@ -75,7 +76,7 @@ class UploadSummaryCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: GlobalText.raw(
                   _statusLabel(context),
                   style: const TextStyle(
                     color: Color(0xFF64748B),
@@ -84,7 +85,7 @@ class UploadSummaryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
+              GlobalText.raw(
                 uploadSpeedMbps == null
                     ? '-- Mbps'
                     : '${uploadSpeedMbps!.toStringAsFixed(1)} Mbps',
@@ -103,7 +104,7 @@ class UploadSummaryCard extends StatelessWidget {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(
+                child: GlobalText.raw(
                   isPaused
                       ? context.loc.resumeAllUploads.toUpperCase()
                       : context.loc.pauseAllUploads.toUpperCase(),
