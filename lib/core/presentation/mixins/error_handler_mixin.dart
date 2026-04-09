@@ -58,9 +58,7 @@ mixin ErrorHandlerMixin {
     ViewUtil.alertDialog(
       context: context ?? Navigation.key.currentContext,
       alertBackgroundColor: AppColors.white.color,
-      content: ErrorDialog(
-        erroMsg: failure.errorMessages,
-      ),
+      content: ErrorDialog(erroMsg: failure.errorMessages),
     );
   }
 

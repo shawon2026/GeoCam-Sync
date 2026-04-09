@@ -1,6 +1,5 @@
- import 'package:flutter/material.dart';
-
-import 'global_text.dart';
+import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 class AppStarterError extends StatelessWidget {
   const AppStarterError({super.key, required this.error});
@@ -35,5 +34,3 @@ class AppStarterError extends StatelessWidget {
     );
   }
 }
- 
- 

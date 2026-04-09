@@ -23,6 +23,7 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final Color? themeBgColor = Theme.of(context).appBarTheme.backgroundColor;
+
     return AppBar(
       elevation: 0,
       centerTitle: centerTitle,
@@ -34,50 +35,63 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
         fontWeight: FontWeight.w500,
         letterSpacing: 0.1,
       ),
-      actions: [
-        ...?actions,
-        if (showLanguageSwitcher)
-          ValueListenableBuilder<Locale>(
-            valueListenable: LocaleManager.instance.localeNotifier,
-            builder: (context, locale, _) {
-              final isEnglishActive = locale.languageCode == 'en';
+      actions: _buildActions(),
+    );
+  }
 
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Container(
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE2E8F0),
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _LanguageSwitchOption(
-                        label: 'EN',
-                        isActive: isEnglishActive,
-                        onTap: () async {
-                          if (!isEnglishActive) {
-                            await LocaleManager.instance.toggleLanguage();
-                          }
-                        },
-                      ),
-                      _LanguageSwitchOption(
-                        label: 'BN',
-                        isActive: !isEnglishActive,
-                        onTap: () async {
-                          if (isEnglishActive) {
-                            await LocaleManager.instance.toggleLanguage();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+  List<Widget>? _buildActions() {
+    final mergedActions = <Widget>[
+      ...?actions,
+      if (showLanguageSwitcher) _buildLanguageSwitcher(),
+    ];
+
+    if (mergedActions.isEmpty) {
+      return null;
+    }
+
+    return mergedActions;
+  }
+
+  Widget _buildLanguageSwitcher() {
+    return ValueListenableBuilder<Locale>(
+      valueListenable: LocaleManager.instance.localeNotifier,
+      builder: (context, locale, _) {
+        final isEnglishActive = locale.languageCode == 'en';
+
+        return Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Container(
+            height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE2E8F0),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _LanguageSwitchOption(
+                  label: 'EN',
+                  isActive: isEnglishActive,
+                  onTap: () async {
+                    if (!isEnglishActive) {
+                      await LocaleManager.instance.toggleLanguage();
+                    }
+                  },
                 ),
-              );
-            },
+                _LanguageSwitchOption(
+                  label: 'BN',
+                  isActive: !isEnglishActive,
+                  onTap: () async {
+                    if (isEnglishActive) {
+                      await LocaleManager.instance.toggleLanguage();
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
-      ],
+        );
+      },
     );
   }
 

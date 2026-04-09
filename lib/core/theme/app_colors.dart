@@ -20,7 +20,7 @@ enum AppColors {
   darkGrey(Color(0xFF4F4F4F)),
   grey(Color(0xFF9E9E9E)),
   lightGrey(Color(0xFFE0E0E0)),
-  white(Color(0xFFFFFFFF)), 
+  white(Color(0xFFFFFFFF)),
   btnText(Color(0xFF878DB5)),
   textBlue(Color(0xFF28294D)),
   greylish(Color(0xff303030)),
@@ -48,4 +48,3 @@ enum AppColors {
 
   const AppColors(this.color);
 }
-

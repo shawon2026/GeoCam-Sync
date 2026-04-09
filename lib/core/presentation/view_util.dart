@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../routes/navigation.dart';
 import '../theme/app_colors.dart';
-import 'widgets/global_text.dart';
 
 class ViewUtil {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackbar(

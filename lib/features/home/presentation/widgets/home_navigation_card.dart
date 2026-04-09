@@ -86,7 +86,7 @@ class HomeNavigationCard extends StatelessWidget {
                 ),
               ),
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-              label: Text(buttonLabel),
+              label: GlobalText.raw(buttonLabel),
             ),
           ),
         ],

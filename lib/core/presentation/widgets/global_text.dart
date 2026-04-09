@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class GlobalText extends StatelessWidget {
-  final String str;
+  final String data;
   final FontWeight? fontWeight;
   final double? fontSize;
   final Color? color;
@@ -20,7 +20,25 @@ class GlobalText extends StatelessWidget {
 
   const GlobalText({
     super.key,
-    required this.str,
+    required String str,
+    this.fontWeight,
+    this.fontSize,
+    this.fontStyle,
+    this.color,
+    this.letterSpacing,
+    this.decoration,
+    this.maxLines,
+    this.textAlign,
+    this.overflow,
+    this.softwrap,
+    this.height,
+    this.fontFamily,
+    this.style,
+  }) : data = str;
+
+  const GlobalText.raw(
+    this.data, {
+    super.key,
     this.fontWeight,
     this.fontSize,
     this.fontStyle,
@@ -38,20 +56,18 @@ class GlobalText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the current text color from theme
     final defaultTextColor = Theme.of(context).textTheme.bodyMedium?.color;
 
     return Text(
-      str,
+      data,
       maxLines: maxLines,
       overflow: overflow,
       textAlign: textAlign,
       softWrap: softwrap,
-      textScaler: TextScaler.linear(1.0),
+      textScaler: const TextScaler.linear(1.0),
       style:
           style ??
           GoogleFonts.inter(
-            // Use provided color or default from theme
             color: color ?? defaultTextColor,
             fontSize: fontSize?.sp,
             fontWeight: fontWeight ?? FontWeight.w500,
@@ -63,4 +79,3 @@ class GlobalText extends StatelessWidget {
     );
   }
 }
-

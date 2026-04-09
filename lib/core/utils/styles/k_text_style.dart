@@ -9,13 +9,10 @@ class KTextStyle {
     fontWeight = FontWeight.normal,
     fontStyle = FontStyle.normal,
     Color? color,
-  }) =>
-      GoogleFonts.poppins(
-        color: color ?? AppColors.textBlue.color,
-        fontSize: fontSize.sp,
-        fontWeight: fontWeight,
-        fontStyle: fontStyle,
-      );
+  }) => GoogleFonts.poppins(
+    color: color ?? AppColors.textBlue.color,
+    fontSize: fontSize.sp,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+  );
 }
-
-

@@ -34,7 +34,8 @@ class _GlobalNetworkListenerState extends State<GlobalNetworkListener> {
   }
 
   void _handleConnectivityChange(List<ConnectivityResult> connectivityResult) {
-    final isConnected = connectivityResult.isNotEmpty &&
+    final isConnected =
+        connectivityResult.isNotEmpty &&
         connectivityResult.any((element) => element != ConnectivityResult.none);
 
     'isNetworkAvailable ::$isConnected'.log();

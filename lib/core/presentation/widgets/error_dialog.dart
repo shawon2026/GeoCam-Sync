@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/theme/app_colors.dart';
 
-import 'global_text.dart';
-
 class ErrorDialog extends StatelessWidget {
-  const ErrorDialog({
-    super.key,
-    required this.erroMsg,
-  });
+  const ErrorDialog({super.key, required this.erroMsg});
 
   final List<dynamic> erroMsg;
 
@@ -44,9 +40,7 @@ class ErrorDialog extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
-            height: 10.h,
-          ),
+          SizedBox(height: 10.h),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(left: 0),
@@ -79,11 +73,9 @@ class ErrorDialog extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
-
-

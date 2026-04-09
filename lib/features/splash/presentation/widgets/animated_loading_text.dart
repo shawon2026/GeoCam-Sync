@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/core/presentation/widgets/global_text.dart';
 
 class AnimatedLoadingText extends StatelessWidget {
   const AnimatedLoadingText({
@@ -45,7 +46,7 @@ class AnimatedLoadingText extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 1.5),
-            child: Text(
+            child: GlobalText.raw(
               letters[index],
               style: const TextStyle(
                 fontSize: 18,
